@@ -47,9 +47,9 @@ export default function Logo({ className = "", size = "normal", showText = true 
         <div className="flex flex-col">
           <div className={`${currentSize.text} font-bold leading-tight`}>
             <span className="text-gray-900">EMPIRE CAR </span>
-            <span className="text-orange-600">A/C</span>
+            <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">A/C</span>
           </div>
-          <div className={`${currentSize.tagline} text-orange-600 font-medium italic leading-tight mt-0.5`}>
+          <div className={`${currentSize.tagline} bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent font-medium italic leading-tight mt-0.5`}>
             Our Perfection Your Satisfaction
           </div>
         </div>

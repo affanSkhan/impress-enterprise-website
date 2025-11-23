@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Logo from './Logo'
 
 /**
  * Footer Component
@@ -13,12 +14,11 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-8">
           {/* About Section */}
           <div>
-            <h3 className="text-xl font-bold mb-4">EMPIRE CAR A/C</h3>
-            <p className="text-gray-300 mb-4">
+            <div className="mb-4">
+              <Logo size="small" className="[&_.text-gray-900]:text-white [&_.text-orange-600]:text-orange-400" />
+            </div>
+            <p className="text-gray-300 mb-3">
               Amravati's trusted source for car air conditioning spare parts and accessories.
-            </p>
-            <p className="text-gray-400 text-sm italic">
-              Our Perfection Your Satisfaction
             </p>
           </div>
 

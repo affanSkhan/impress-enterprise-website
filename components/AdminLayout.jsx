@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import Logo from './Logo'
 import { supabase } from '@/lib/supabaseClient'
 
 /**
@@ -62,8 +63,11 @@ export default function AdminLayout({ children }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <Link href="/admin" className="text-lg sm:text-xl font-bold text-primary-600">
-              Empire Car A/C Admin
+            <Link href="/admin" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <Logo size="small" showText={false} />
+              <span className="hidden sm:inline text-base font-semibold text-gray-800">
+                Admin Panel
+              </span>
             </Link>
           </div>
 

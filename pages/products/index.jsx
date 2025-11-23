@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
 import CategoryFilter from '@/components/CategoryFilter'
+import Logo from '@/components/Logo'
 import { supabase } from '@/lib/supabaseClient'
 
 /**
@@ -108,9 +109,14 @@ export default function ProductsPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 text-gray-900">
-              Product Catalogue
-            </h1>
+            <div className="flex items-center gap-4 mb-4">
+              <Logo size="normal" />
+              <div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+                  Product Catalogue
+                </h1>
+              </div>
+            </div>
             <p className="text-base sm:text-lg text-gray-600">
               Browse our selection of {totalProducts} quality spare parts
             </p>

@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import Logo from '@/components/Logo'
 
 /**
  * Contact Page - Phase 2 Enhanced
@@ -58,6 +59,9 @@ export default function ContactPage() {
           <div className="max-w-6xl mx-auto">
             {/* Page Header */}
             <div className="text-center mb-8 sm:mb-12">
+              <div className="flex flex-col items-center mb-6">
+                <Logo size="normal" />
+              </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-gray-900">
                 Contact Us
               </h1>

@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import Logo from '@/components/Logo'
 
 /**
  * Home Page
@@ -36,22 +37,26 @@ export default function Home() {
       <main className="min-h-screen">
         {/* Hero Section */}
         <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12 sm:py-16 lg:py-24">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
-              <span className="block">EMPIRE CAR A/C</span>
-              <span className="block text-2xl sm:text-3xl md:text-4xl mt-2 text-orange-300 italic font-medium">Our Perfection Your Satisfaction</span>
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
-              Amravati's trusted source for quality car air conditioning spare parts and accessories. 
-              Browse our extensive catalogue • Professional offline services available
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/products" className="btn-primary bg-white text-primary-600 hover:bg-gray-100 text-center">
-                Browse Products
-              </Link>
-              <Link href="/contact" className="btn-primary border-2 border-white bg-transparent hover:bg-white hover:text-primary-600 text-center">
-                Contact Us
-              </Link>
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col items-center text-center">
+              {/* Logo */}
+              <div className="mb-6">
+                <Logo size="large" className="[&_.text-gray-900]:text-white [&_.text-orange-600]:text-orange-300" />
+              </div>
+              
+              <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
+                Amravati's trusted source for quality car air conditioning spare parts and accessories. 
+                Browse our extensive catalogue • Professional offline services available
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/products" className="btn-primary bg-white text-primary-600 hover:bg-gray-100 text-center">
+                  Browse Products
+                </Link>
+                <Link href="/contact" className="btn-primary border-2 border-white bg-transparent hover:bg-white hover:text-primary-600 text-center">
+                  Contact Us
+                </Link>
+              </div>
             </div>
           </div>
         </section>

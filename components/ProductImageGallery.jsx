@@ -161,7 +161,7 @@ export default function ProductImageGallery({
           {images.find((img) => img.is_primary) ? (
             <span className="text-green-600 font-medium">Set</span>
           ) : (
-            <span className="text-orange-600 font-medium">Not set</span>
+            <span className="text-blue-600 font-medium">Not set</span>
           )}
         </span>
       </div>

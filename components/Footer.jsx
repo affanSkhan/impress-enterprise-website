@@ -10,13 +10,13 @@ export default function Footer() {
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-12 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 to-blue-900/20"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-900/20 via-slate-900/30 to-blue-900/20"></div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid md:grid-cols-3 gap-8">
           {/* About Section */}
           <div>
             <div className="mb-4">
-              <Logo size="small" className="[&_.text-gray-900]:text-white [&_.text-orange-600]:text-orange-400" />
+              <Logo size="small" className="[&_.text-gray-900]:text-white [&_.bg-gradient-to-r]:from-slate-400 [&_.bg-gradient-to-r]:to-blue-400" />
             </div>
             <p className="text-gray-300 mb-3">
               Amravati's trusted source for car air conditioning spare parts and accessories.

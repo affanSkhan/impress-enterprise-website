@@ -56,19 +56,20 @@ export default function AdminLogin() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-800 flex items-center justify-center px-4">
-        <div className="max-w-md w-full">
+      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="max-w-md w-full relative z-10">
           {/* Logo/Brand */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-block">
-              <h1 className="text-3xl font-bold text-white mb-2">Empire Spare Parts</h1>
+              <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">Empire Car A/C</h1>
             </Link>
-            <p className="text-primary-100">Admin Dashboard</p>
+            <p className="text-white/90">Admin Dashboard</p>
           </div>
 
           {/* Login Card */}
-          <div className="bg-white rounded-lg shadow-xl p-8">
-            <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
+          <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
+            <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Sign In</h2>
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
@@ -111,7 +112,7 @@ export default function AdminLogin() {
 
               <button
                 type="submit"
-                className="w-full btn-primary"
+                className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
               >
                 {loading ? (
@@ -129,14 +130,14 @@ export default function AdminLogin() {
             </form>
 
             <div className="mt-6 text-center">
-              <Link href="/" className="text-sm text-primary-600 hover:underline">
+              <Link href="/" className="text-sm text-purple-600 hover:text-purple-700 hover:underline font-medium">
                 ← Back to Website
               </Link>
             </div>
           </div>
 
           {/* Security Notice */}
-          <div className="mt-6 text-center text-primary-100 text-sm">
+          <div className="mt-6 text-center text-white/80 text-sm">
             <p>Secure admin access only</p>
           </div>
         </div>

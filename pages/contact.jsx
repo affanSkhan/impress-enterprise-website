@@ -54,7 +54,7 @@ export default function ContactPage() {
 
       <Navbar />
 
-      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 py-8 sm:py-12 lg:py-16">
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-cyan-50 py-8 sm:py-12 lg:py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             {/* Page Header */}
@@ -62,7 +62,7 @@ export default function ContactPage() {
               <div className="flex flex-col items-center mb-6">
                 <Logo size="normal" />
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-slate-600 to-blue-700 bg-clip-text text-transparent">
                 Contact Us
               </h1>
               <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto">

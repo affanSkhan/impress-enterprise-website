@@ -51,7 +51,7 @@ export default function AdminLayout({ children }) {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Top Navigation Bar */}
-      <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-40">
+      <nav className="bg-gradient-to-r from-white via-slate-50 to-blue-50 shadow-lg fixed top-0 left-0 right-0 z-40 backdrop-blur-sm">
         <div className="flex items-center justify-between px-3 sm:px-4 h-16">
           <div className="flex items-center">
             <button
@@ -81,7 +81,7 @@ export default function AdminLayout({ children }) {
               <span className="text-sm text-gray-600 max-w-[150px] truncate">{user.email}</span>
               <button
                 onClick={handleLogout}
-                className="btn-secondary text-sm"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-slate-600 text-white rounded-lg hover:from-blue-700 hover:to-slate-700 transition-all text-sm font-semibold shadow-md"
               >
                 Logout
               </button>
@@ -109,14 +109,14 @@ export default function AdminLayout({ children }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed top-16 left-0 bottom-0 w-64 bg-white shadow-lg transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed top-16 left-0 bottom-0 w-64 bg-gradient-to-b from-white to-blue-50 shadow-2xl transition-transform duration-300 z-40 overflow-y-auto border-r-2 border-blue-100 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <nav className="p-4">
           <ul className="space-y-2">
             <li>
               <Link
                 href="/admin"
-                className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                  router.pathname === '/admin' ? 'bg-primary-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
+                  router.pathname === '/admin' ? 'bg-gradient-to-r from-blue-600 to-slate-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-slate-50'
                 }`}
               >
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,8 +128,8 @@ export default function AdminLayout({ children }) {
             <li>
               <Link
                 href="/admin/products"
-                className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                  router.pathname.startsWith('/admin/products') ? 'bg-primary-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
+                  router.pathname.startsWith('/admin/products') ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50'
                 }`}
               >
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,8 +141,8 @@ export default function AdminLayout({ children }) {
             <li>
               <Link
                 href="/admin/categories"
-                className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                  router.pathname.startsWith('/admin/categories') ? 'bg-primary-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
+                  router.pathname.startsWith('/admin/categories') ? 'bg-gradient-to-r from-slate-600 to-gray-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-gray-50'
                 }`}
               >
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,8 +154,8 @@ export default function AdminLayout({ children }) {
             <li>
               <Link
                 href="/admin/invoices/new"
-                className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                  router.pathname === '/admin/invoices/new' ? 'bg-primary-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
+                  router.pathname === '/admin/invoices/new' ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50'
                 }`}
               >
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,8 +167,8 @@ export default function AdminLayout({ children }) {
             <li>
               <Link
                 href="/admin/invoices"
-                className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                  router.pathname === '/admin/invoices' ? 'bg-primary-600 text-white' : 'text-gray-700 hover:bg-gray-100'
+                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
+                  router.pathname === '/admin/invoices' ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'
                 }`}
               >
                 <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,7 +182,7 @@ export default function AdminLayout({ children }) {
       </aside>
 
       {/* Main Content */}
-      <main className={`pt-16 transition-all duration-300 lg:ml-0`}>
+      <main className={`pt-16 transition-all duration-300 lg:ml-0 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50`}>
         <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>

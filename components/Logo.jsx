@@ -31,7 +31,7 @@ export default function Logo({ className = "", size = "normal", showText = true 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Circular Logo Image */}
-      <div className={`${currentSize.logoClass} rounded-full overflow-hidden bg-gray-900 flex-shrink-0 shadow-lg ring-2 ring-orange-400 ring-offset-2`}>
+      <div className={`${currentSize.logoClass} rounded-full overflow-hidden bg-gray-900 flex-shrink-0 shadow-lg ring-2 ring-blue-400 ring-offset-2`}>
         <Image
           src="/Empire Car Ac  Logo Design.jpg"
           alt="Empire Car A/C Logo"
@@ -47,9 +47,9 @@ export default function Logo({ className = "", size = "normal", showText = true 
         <div className="flex flex-col">
           <div className={`${currentSize.text} font-bold leading-tight`}>
             <span className="text-gray-900">EMPIRE CAR </span>
-            <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">A/C</span>
+            <span className="bg-gradient-to-r from-blue-500 to-slate-500 bg-clip-text text-transparent">A/C</span>
           </div>
-          <div className={`${currentSize.tagline} bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent font-medium italic leading-tight mt-0.5`}>
+          <div className={`${currentSize.tagline} bg-gradient-to-r from-blue-500 to-slate-500 bg-clip-text text-transparent font-medium italic leading-tight mt-0.5`}>
             Our Perfection Your Satisfaction
           </div>
         </div>

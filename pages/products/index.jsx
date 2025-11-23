@@ -104,20 +104,20 @@ export default function ProductsPage() {
 
       <Navbar />
 
-      <main className="min-h-screen bg-gray-50 py-6 sm:py-8 lg:py-12">
+      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-6 sm:py-8 lg:py-12">
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 text-gray-900">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent">
               Product Catalogue
             </h1>
-            <p className="text-base sm:text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-gray-700">
               Browse our selection of {totalProducts} quality spare parts
             </p>
           </div>
 
           {/* Filters Section */}
-          <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border-t-4 border-blue-500">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Search */}
               <div>

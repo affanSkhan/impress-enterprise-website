@@ -153,6 +153,19 @@ export default function AdminLayout({ children }) {
             </li>
             <li>
               <Link
+                href="/admin/orders"
+                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
+                  router.pathname.startsWith('/admin/orders') ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50'
+                }`}
+              >
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                Orders
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/admin/invoices/new"
                 className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
                   router.pathname === '/admin/invoices/new' ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50'

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import Head from 'next/head';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -231,9 +232,9 @@ export default function PublicInvoicePage() {
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-2">Invoice Not Found</h2>
                 <p className="text-gray-600 mb-6">The invoice you're looking for doesn't exist or has been removed.</p>
-                <a href="/" className="btn-primary inline-block">
+                <Link href="/" className="btn-primary inline-block">
                   Back to Home
-                </a>
+                </Link>
               </div>
             </div>
           </div>

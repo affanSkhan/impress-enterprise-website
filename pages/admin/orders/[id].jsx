@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import AdminLayout from '@/components/AdminLayout'
 import { supabase } from '@/lib/supabaseClient'
+import { convertOrderToInvoice } from '@/utils/orderHelpers'
 
 /**
  * Admin Order Detail Page
@@ -147,21 +148,33 @@ export default function AdminOrderDetail() {
       setSaving(true)
       setErrorMessage('')
 
-      // Check if all items have prices set
-      const missingPrices = orderItems.filter(item => !item.admin_price || item.admin_price <= 0)
-      if (missingPrices.length > 0) {
-        setErrorMessage('Please set prices for all items before generating invoice')
+      // Get current user
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        setErrorMessage('You must be logged in to generate invoice')
         setSaving(false)
         return
       }
 
-      // TODO: Implement invoice generation
-      // This will be implemented in the next step
-      setSuccessMessage('Invoice generation feature coming soon!')
-      setTimeout(() => setSuccessMessage(''), 3000)
+      // Convert order to invoice
+      const result = await convertOrderToInvoice(id, session.user.id)
+
+      if (result.success) {
+        setSuccessMessage(`Invoice ${result.invoiceNumber} generated successfully!`)
+        
+        // Update local order state
+        setOrder({ ...order, status: 'invoiced', invoice_id: result.invoice.id })
+        
+        // Redirect to invoice after a short delay
+        setTimeout(() => {
+          router.push(`/admin/invoices/${result.invoice.id}`)
+        }, 2000)
+      } else {
+        setErrorMessage(result.error || 'Failed to generate invoice')
+      }
     } catch (error) {
       console.error('Error generating invoice:', error)
-      setErrorMessage('Failed to generate invoice')
+      setErrorMessage('Failed to generate invoice: ' + error.message)
     } finally {
       setSaving(false)
     }

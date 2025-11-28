@@ -10,8 +10,6 @@ import {
   generateInvoiceNumber,
   calculateLineTotal,
   calculateSubtotal,
-  calculateTaxAmount,
-  calculateTotal,
   formatCurrency,
   validateInvoice,
   formatDateForInput
@@ -30,9 +28,6 @@ export default function NewInvoicePage() {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [invoiceDate, setInvoiceDate] = useState(formatDateForInput(new Date()));
-  
-  // Tax
-  const [taxPercent, setTaxPercent] = useState(0);
   
   // Items
   const [items, setItems] = useState([
@@ -118,8 +113,7 @@ export default function NewInvoicePage() {
 
   // Calculate totals
   const subtotal = calculateSubtotal(items);
-  const taxAmount = calculateTaxAmount(subtotal, taxPercent);
-  const total = calculateTotal(subtotal, taxAmount);
+  const total = subtotal;
 
   // Submit invoice
   async function handleSubmit(e) {
@@ -151,8 +145,8 @@ export default function NewInvoicePage() {
           customer_phone: customerPhone.trim() || null,
           date: invoiceDate,
           subtotal: parseFloat(formatCurrency(subtotal)),
-          tax_percent: parseFloat(taxPercent),
-          tax_amount: parseFloat(formatCurrency(taxAmount)),
+          tax_percent: 0,
+          tax_amount: 0,
           total: parseFloat(formatCurrency(total)),
           created_by: user.id
         }])
@@ -395,23 +389,6 @@ export default function NewInvoicePage() {
               <div className="flex justify-between items-center">
                 <span className="text-gray-700">Subtotal:</span>
                 <span className="font-medium text-lg">₹{formatCurrency(subtotal)}</span>
-              </div>
-
-              <div className="flex justify-between items-center gap-4">
-                <label htmlFor="tax_percent" className="text-gray-700">Tax (%):</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    id="tax_percent"
-                    value={taxPercent}
-                    onChange={(e) => setTaxPercent(e.target.value)}
-                    className="input-field w-24"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                  />
-                  <span className="font-medium w-24 text-right">₹{formatCurrency(taxAmount)}</span>
-                </div>
               </div>
 
               <div className="flex justify-between items-center py-3 border-t-2 border-gray-300">

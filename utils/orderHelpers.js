@@ -43,9 +43,7 @@ export async function convertOrderToInvoice(orderId, userId) {
       const itemTotal = item.finalPrice * item.quantity
       return sum + itemTotal
     }, 0)
-    const taxPercent = 0 // Set default tax, can be modified
-    const taxAmount = (subtotal * taxPercent) / 100
-    const total = subtotal + taxAmount
+    const total = subtotal
 
     // Generate invoice number
     const invoiceNumber = await generateInvoiceNumber()
@@ -59,8 +57,8 @@ export async function convertOrderToInvoice(orderId, userId) {
         customer_phone: order.customer.phone || null,
         date: new Date().toISOString().split('T')[0],
         subtotal: parseFloat(subtotal.toFixed(2)),
-        tax_percent: parseFloat(taxPercent),
-        tax_amount: parseFloat(taxAmount.toFixed(2)),
+        tax_percent: 0,
+        tax_amount: 0,
         total: parseFloat(total.toFixed(2)),
         created_by: userId
       }])

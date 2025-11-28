@@ -169,10 +169,6 @@ export default function InvoiceDetailPage() {
       doc.text('Subtotal:', labelX, yPos);
       doc.text(`Rs. ${formatCurrency(invoice.subtotal)}`, totalsX, yPos, { align: 'right' });
 
-      yPos += 7;
-      doc.text(`Tax (${invoice.tax_percent}%):`, labelX, yPos);
-      doc.text(`Rs. ${formatCurrency(invoice.tax_amount)}`, totalsX, yPos, { align: 'right' });
-
       yPos += 10;
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(12);
@@ -342,10 +338,6 @@ export default function InvoiceDetailPage() {
               <div className="flex justify-between items-center py-2 border-t border-gray-200">
                 <span className="text-gray-700">Subtotal:</span>
                 <span className="font-medium text-gray-900">₹{formatCurrency(invoice.subtotal)}</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-gray-700">Tax ({invoice.tax_percent}%):</span>
-                <span className="font-medium text-gray-900">₹{formatCurrency(invoice.tax_amount)}</span>
               </div>
               <div className="flex justify-between items-center py-3 border-t-2 border-gray-300">
                 <span className="text-xl font-bold text-gray-900">Total:</span>

@@ -200,7 +200,14 @@ export default function AdminOrderDetail() {
   }
 
   function calculateOrderTotal() {
-    return orderItems.reduce((sum, item) => sum + (item.admin_total || 0), 0)
+    return orderItems.reduce((sum, item) => {
+      // Use admin_total if set, otherwise calculate from admin_price or product price
+      if (item.admin_total > 0) {
+        return sum + item.admin_total
+      }
+      const price = item.admin_price || item.product?.price || 0
+      return sum + (price * item.quantity)
+    }, 0)
   }
 
   if (loading) {
@@ -389,7 +396,12 @@ export default function AdminOrderDetail() {
                       Total (₹)
                     </label>
                     <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg font-semibold text-gray-900">
-                      {(item.admin_total || 0).toFixed(2)}
+                      {(() => {
+                        // Calculate total: use admin_total if set, otherwise calculate from prices
+                        if (item.admin_total > 0) return item.admin_total.toFixed(2)
+                        const price = item.admin_price || item.product?.price || 0
+                        return (price * item.quantity).toFixed(2)
+                      })()}
                     </div>
                   </div>
                   <div className="flex items-end">

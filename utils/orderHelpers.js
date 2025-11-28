@@ -53,8 +53,7 @@ export async function convertOrderToInvoice(orderId, userId) {
         tax_percent: parseFloat(taxPercent),
         tax_amount: parseFloat(taxAmount.toFixed(2)),
         total: parseFloat(total.toFixed(2)),
-        created_by: userId,
-        notes: order.notes ? `Generated from Order: ${order.order_number}\n\n${order.notes}` : `Generated from Order: ${order.order_number}`
+        created_by: userId
       }])
       .select()
       .single()

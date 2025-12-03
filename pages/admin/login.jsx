@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 import { supabase } from '@/lib/supabaseClient'
 
 /**
@@ -56,20 +57,35 @@ export default function AdminLogin() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-cyan-500 flex items-center justify-center px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black opacity-10"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center px-4 relative overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute w-96 h-96 bg-blue-500/10 rounded-full blur-3xl top-1/4 left-1/4 animate-pulse"></div>
+          <div className="absolute w-96 h-96 bg-slate-500/10 rounded-full blur-3xl bottom-1/4 right-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        </div>
+
         <div className="max-w-md w-full relative z-10">
           {/* Logo/Brand */}
           <div className="text-center mb-8">
-            <Link href="/" className="inline-block">
-              <h1 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">Empire Car A/C</h1>
+            <Link href="/" className="inline-flex flex-col items-center group">
+              <div className="bg-white p-4 rounded-2xl shadow-2xl mb-4 group-hover:scale-105 transition-transform">
+                <Logo size="large" showText={false} />
+              </div>
+              <h1 className="text-3xl font-bold text-white mb-1 drop-shadow-lg">Empire Car A/C</h1>
+              <p className="text-blue-200 font-medium">Admin Dashboard</p>
             </Link>
-            <p className="text-white/90">Admin Dashboard</p>
           </div>
 
           {/* Login Card */}
           <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-white/20">
-            <h2 className="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Sign In</h2>
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-slate-600 rounded-xl flex items-center justify-center mr-3">
+                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent">Sign In</h2>
+            </div>
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
@@ -112,7 +128,7 @@ export default function AdminLogin() {
 
               <button
                 type="submit"
-                className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all transform hover:scale-105 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-slate-600 text-white rounded-lg hover:from-blue-700 hover:to-slate-700 transition-all transform hover:scale-105 font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 disabled={loading}
               >
                 {loading ? (
@@ -130,15 +146,23 @@ export default function AdminLogin() {
             </form>
 
             <div className="mt-6 text-center">
-              <Link href="/" className="text-sm text-purple-600 hover:text-purple-700 hover:underline font-medium">
-                ← Back to Website
+              <Link href="/" className="text-sm text-blue-600 hover:text-blue-700 hover:underline font-medium inline-flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Website
               </Link>
             </div>
           </div>
 
           {/* Security Notice */}
-          <div className="mt-6 text-center text-white/80 text-sm">
-            <p>Secure admin access only</p>
+          <div className="mt-6 text-center">
+            <div className="inline-flex items-center gap-2 text-white/80 text-sm bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              <span>Secure admin access only</span>
+            </div>
           </div>
         </div>
       </div>

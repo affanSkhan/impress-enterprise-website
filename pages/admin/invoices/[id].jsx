@@ -29,8 +29,8 @@ export default function InvoiceDetailPage() {
     state: 'Maharashtra',
     zipCode: '444601',
     phone: '+917741077666',
-    email: 'Zakirabdulfahim@gmail.com',
-    website: 'https://www.empirecarac.in/'
+    email: 'Empirecarac@gmail.com',
+    website: 'empirecarac.in'
   };
 
   useEffect(() => {
@@ -399,13 +399,14 @@ export default function InvoiceDetailPage() {
           {/* Business Header */}
           <div className="mb-6 sm:mb-8 border-b pb-4 sm:pb-6">
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-              <img src="/Empire Car Ac  Logo Design.jpg" alt="Empire Car A/C Logo" className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover" />
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center">{businessInfo.name}</h1>
+              <img src="/Empire Car Ac  Logo Design.jpg" alt="Empire Car A/C Logo" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover" />
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 text-center">{businessInfo.name}</h1>
             </div>
-            <div className="text-center">
-              <p className="text-sm sm:text-base text-gray-600">{businessInfo.address}</p>
-              <p className="text-sm sm:text-base text-gray-600">{businessInfo.city}, {businessInfo.state} {businessInfo.zipCode}</p>
-              <p className="text-sm sm:text-base text-gray-600">Phone: {businessInfo.phone} | Website: <a href={businessInfo.website} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline break-all">{businessInfo.website}</a></p>
+            <div className="text-center space-y-1">
+              <p className="text-xs sm:text-sm text-gray-600">{businessInfo.address}</p>
+              <p className="text-xs sm:text-sm text-gray-600">{businessInfo.city}, {businessInfo.state} {businessInfo.zipCode}</p>
+              <p className="text-xs sm:text-sm text-gray-600">Phone: <a href="tel:{businessInfo.phone}" className="text-primary-600 hover:underline">{businessInfo.phone}</a></p>
+              <p className="text-xs sm:text-sm text-gray-600">Website: <a href="https://{businessInfo.website}" target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline break-all">{businessInfo.website}</a></p>
             </div>
           </div>
 
@@ -436,8 +437,8 @@ export default function InvoiceDetailPage() {
 
           {/* Items Table */}
           <div className="mb-6 sm:mb-8">
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <table className="w-full min-w-[640px]">
+            <div className="overflow-x-auto -mx-4 sm:mx-0 rounded-lg">
+              <table className="w-full min-w-[600px]">
                 <thead className="bg-primary-600 text-white">
                   <tr>
                     <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-xs sm:text-sm">Item Description</th>

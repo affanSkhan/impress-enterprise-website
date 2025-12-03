@@ -7,6 +7,16 @@
   body {
     @apply bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 text-gray-900;
   }
+  
+  /* Mobile optimizations */
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 /* Custom component styles */

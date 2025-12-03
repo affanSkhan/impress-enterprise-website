@@ -276,7 +276,40 @@ export default function AdminDashboard() {
                 View All →
               </Link>
             </div>
-            <div className="overflow-x-auto">
+            
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-3">
+              {recentOrders.map((order) => (
+                <div key={order.id} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <div className="text-sm font-semibold text-gray-900">#{order.order_number}</div>
+                      <div className="text-xs text-gray-600">{order.customer?.name || 'N/A'}</div>
+                    </div>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                      order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      order.status === 'invoiced' ? 'bg-purple-100 text-purple-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {order.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm font-bold text-gray-900">
+                      ₹{(order.admin_total || 0).toLocaleString()}
+                    </div>
+                    <Link href={`/admin/orders/${order.id}`} className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                      View →
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>

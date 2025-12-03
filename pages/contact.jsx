@@ -13,16 +13,16 @@ export default function ContactPage() {
     name: 'Empire Car A/C',
     phoneNumber: '+917741077666',           // Format: +[country code][number]
     whatsappNumber: '917741077666',         // Format: [country code][number] (no + or spaces)
-    email: 'Zakirabdulfahim@gmail.com',
+    email: 'Empirecarac@gmail.com',
     address: 'Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati',
     city: 'Amravati',
     state: 'Maharashtra',
     zipCode: '444601',
     country: 'India',
     // Google Maps location link
-    locationUrl: 'https://maps.app.goo.gl/tBSGGr3LU2688G688?g_st=aw',
-    // Google Maps embed URL (get from Google Maps > Share > Embed a map)
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968482413!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus'
+    locationUrl: 'https://maps.app.goo.gl/WgWs6qW7dFqAkmPj9?g_st=aw',
+    // Google Maps embed URL
+    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3722.5!2d77.7544!3d21.0925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd6a4a41388dbc7%3A0x3c28f1b3c39ea9f1!2sShop%20no%2019%2C%20Empire%20Car%20Ac%20Repairing%2C%20usmaniya%20masjid%20complex%2C%20bus%20stand%20road%2C%20Maltekdi%2C%20Amravati%2C%20Maharashtra%20444601!5e0!3m2!1sen!2sin!4v1733267890123!5m2!1sen!2sin'
   }
 
   const businessHours = {
@@ -72,7 +72,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
               {/* Contact Information */}
               <div className="bg-white rounded-xl shadow-xl p-6 sm:p-8 border-t-4 border-gradient-to-r from-blue-500 to-purple-500">
                 <h2 className="text-2xl font-bold mb-6">Get In Touch</h2>
@@ -122,7 +122,7 @@ export default function ContactPage() {
                       <h3 className="font-semibold mb-1 text-gray-900">Address</h3>
                       <p className="text-gray-700">{fullAddress}</p>
                       <a 
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`}
+                        href={businessInfo.locationUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary-600 hover:text-primary-700 hover:underline mt-1 inline-block"
@@ -224,7 +224,7 @@ export default function ContactPage() {
               </div>
               <div className="p-4 bg-gray-50 text-center">
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`}
+                  href={businessInfo.locationUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary-600 hover:text-primary-700 font-medium inline-flex items-center"

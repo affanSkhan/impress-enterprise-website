@@ -210,7 +210,7 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="space-y-4 mb-6">
               {cartItems.map((item) => (
-                <div key={item.id} className="card">
+                <div key={item.id} className="card hover:shadow-xl transition-shadow">
                   <div className="flex flex-col sm:flex-row gap-4">
                     {/* Product Image */}
                     <div className="relative w-full sm:w-24 h-48 sm:h-24 flex-shrink-0">
@@ -239,17 +239,17 @@ export default function CartPage() {
                         <div className="flex items-center border border-gray-300 rounded-lg">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="px-3 py-1 hover:bg-gray-100 transition-colors"
+                            className="px-4 py-2 hover:bg-gray-100 transition-colors touch-manipulation"
                             disabled={item.quantity <= 1}
                           >
                             −
                           </button>
-                          <span className="px-4 py-1 border-x border-gray-300 font-semibold">
+                          <span className="px-4 py-2 border-x border-gray-300 font-semibold min-w-[3rem] text-center">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="px-3 py-1 hover:bg-gray-100 transition-colors"
+                            className="px-4 py-2 hover:bg-gray-100 transition-colors touch-manipulation"
                           >
                             +
                           </button>

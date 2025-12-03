@@ -220,62 +220,108 @@ export default function InvoicesListPage() {
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <table className="w-full min-w-[640px]">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Invoice #
-                    </th>
-                    <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Customer
-                    </th>
-                    <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-700 uppercase tracking-wider hidden md:table-cell">
-                      Phone
-                    </th>
-                    <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-right text-[10px] sm:text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Total
-                    </th>
-                    <th className="px-2 sm:px-3 md:px-4 py-2 sm:py-3 text-center text-[10px] sm:text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredInvoices.map((invoice) => (
-                    <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 whitespace-nowrap">
-                        <span className="font-medium text-primary-600 text-xs sm:text-sm">{invoice.invoice_number}</span>
-                      </td>
-                      <td className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 whitespace-nowrap text-[10px] sm:text-xs md:text-sm text-gray-600">
-                        {formatDate(invoice.date)}
-                      </td>
-                      <td className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 whitespace-nowrap">
-                        <div className="font-medium text-gray-900 text-xs sm:text-sm">{invoice.customer_name}</div>
-                      </td>
-                      <td className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-600 hidden md:table-cell">
-                        {invoice.customer_phone || '—'}
-                      </td>
-                      <td className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 whitespace-nowrap text-right font-semibold text-gray-900 text-xs sm:text-sm">
-                        ₹{formatCurrency(invoice.total)}
-                      </td>
-                      <td className="px-2 sm:px-3 md:px-4 py-3 sm:py-4 whitespace-nowrap text-center">
-                        <Link
-                          href={`/admin/invoices/${invoice.id}`}
-                          className="text-primary-600 hover:text-primary-700 font-medium text-[10px] sm:text-xs md:text-sm"
-                        >
-                          <span className="hidden sm:inline">View Details →</span>
-                          <span className="sm:hidden">View →</span>
-                        </Link>
-                      </td>
+            <>
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4">
+                {filteredInvoices.map((invoice) => (
+                  <div key={invoice.id} className="bg-white rounded-xl shadow-md p-4 border border-gray-200">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="text-sm font-bold text-primary-600 mb-1">{invoice.invoice_number}</div>
+                        <div className="text-xs text-gray-500">{formatDate(invoice.date)}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-bold text-gray-900">₹{formatCurrency(invoice.total)}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 mb-3">
+                      <div className="flex items-center text-sm">
+                        <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span className="font-medium text-gray-900">{invoice.customer_name}</span>
+                      </div>
+                      {invoice.customer_phone && (
+                        <div className="flex items-center text-sm">
+                          <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          <span className="text-gray-600">{invoice.customer_phone}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <Link
+                      href={`/admin/invoices/${invoice.id}`}
+                      className="w-full flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all font-medium shadow-md text-sm"
+                    >
+                      View Details
+                      <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Invoice #
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Customer
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Phone
+                      </th>
+                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Total
+                      </th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredInvoices.map((invoice) => (
+                      <tr key={invoice.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <span className="font-medium text-primary-600 text-sm">{invoice.invoice_number}</span>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {formatDate(invoice.date)}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          <div className="font-medium text-gray-900 text-sm">{invoice.customer_name}</div>
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
+                          {invoice.customer_phone || '—'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-right font-semibold text-gray-900 text-sm">
+                          ₹{formatCurrency(invoice.total)}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-center">
+                          <Link
+                            href={`/admin/invoices/${invoice.id}`}
+                            className="text-primary-600 hover:text-primary-700 font-medium text-sm"
+                          >
+                            View Details →
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
 

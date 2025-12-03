@@ -104,7 +104,7 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className="bg-gradient-to-r from-white via-slate-50 to-blue-50 shadow-lg sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
+    <nav className="bg-white/70 backdrop-blur-md border-b border-white/20 shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -152,7 +152,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2"
+            className="md:hidden p-2 relative"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,6 +162,11 @@ export default function Navbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
+            {isLoggedIn && cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full border-2 border-white animate-pulse">
+                {cartCount > 9 ? '9+' : cartCount}
+              </span>
+            )}
           </button>
         </div>
 
@@ -184,23 +189,27 @@ export default function Navbar() {
                   <Link href="/customer/dashboard" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-4 py-2 hover:bg-blue-50 rounded-lg">
                     Dashboard
                   </Link>
-                  <Link href="/customer/cart" className="relative px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-sm font-semibold shadow-md text-center mx-4">
-                    My Cart
-                    {cartCount > 0 && (
-                      <span className="absolute -top-2 -right-2 flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full border-2 border-white animate-pulse">
-                        {cartCount > 9 ? '9+' : cartCount}
-                      </span>
-                    )}
-                  </Link>
+                  <div className="px-4 py-2">
+                    <Link href="/customer/cart" className="relative inline-block w-full px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-sm font-semibold shadow-md text-center">
+                      My Cart
+                      {cartCount > 0 && (
+                        <span className="absolute -top-2 -right-2 flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 rounded-full border-2 border-white animate-pulse">
+                          {cartCount > 9 ? '9+' : cartCount}
+                        </span>
+                      )}
+                    </Link>
+                  </div>
                 </>
               ) : (
                 <>
                   <Link href="/auth/login" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-4 py-2 hover:bg-blue-50 rounded-lg">
                     Customer Login
                   </Link>
-                  <Link href="/auth/signup" className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-sm font-semibold shadow-md text-center mx-4">
-                    Sign Up
-                  </Link>
+                  <div className="px-4 py-2">
+                    <Link href="/auth/signup" className="inline-block w-full px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all text-sm font-semibold shadow-md text-center">
+                      Sign Up
+                    </Link>
+                  </div>
                 </>
               )}
             </div>

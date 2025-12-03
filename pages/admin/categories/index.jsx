@@ -11,6 +11,7 @@ export default function CategoriesPage() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchCategories();
@@ -55,6 +56,16 @@ export default function CategoriesPage() {
   function showToast(type, message) {
     setToast({ type, message });
   }
+
+  // Filter categories by search term
+  const filteredCategories = categories.filter(category => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      category.name?.toLowerCase().includes(searchLower) ||
+      category.slug?.toLowerCase().includes(searchLower)
+    );
+  });
 
   if (loading) {
     return (
@@ -102,30 +113,73 @@ export default function CategoriesPage() {
         </div>
       )}
 
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Categories</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">Manage product categories</p>
-        </div>
-        <Link
-          href="/admin/categories/new"
-          className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Add Category
-        </Link>
-      </div>
-
-      {categories.length === 0 ? (
-        <div className="card text-center py-12">
-          <p className="text-gray-500 mb-4">No categories found</p>
-          <Link href="/admin/categories/new" className="btn-primary inline-block">
-            Create Your First Category
+      <div className="mb-4 sm:mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Categories</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">Manage product categories</p>
+          </div>
+          <Link
+            href="/admin/categories/new"
+            className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Add Category
           </Link>
         </div>
-      ) : (
+
+        {/* Search Bar */}
+        <div className="card p-3 sm:p-4">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by name or slug..."
+              className="w-full pl-10 pr-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <svg
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {filteredCategories.length === 0 && !loading ? (
+        <div className="card text-center py-12">
+          <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <p className="text-gray-500 mb-4">{searchTerm ? 'No categories match your search' : 'No categories found'}</p>
+          {!searchTerm && (
+            <Link href="/admin/categories/new" className="btn-primary inline-block">
+              Create Your First Category
+            </Link>
+          )}
+          {searchTerm && (
+            <button onClick={() => setSearchTerm('')} className="btn-secondary inline-block">
+              Clear Search
+            </button>
+          )}
+        </div>
+      ) : !loading && (
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px]">
@@ -146,7 +200,7 @@ export default function CategoriesPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {categories.map((category) => (
+                {filteredCategories.map((category) => (
                   <tr key={category.id} className="hover:bg-gray-50">
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-medium text-gray-900">{category.name}</div>
@@ -179,6 +233,13 @@ export default function CategoriesPage() {
             </table>
           </div>
         </div>
+      )}
+
+      {/* Results count */}
+      {!loading && filteredCategories.length > 0 && (
+        <p className="text-sm text-gray-600 mt-4 text-center">
+          Showing {filteredCategories.length} of {categories.length} {categories.length !== 1 ? 'categories' : 'category'}
+        </p>
       )}
     </AdminLayout>
   );

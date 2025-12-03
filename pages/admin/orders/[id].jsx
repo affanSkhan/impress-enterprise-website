@@ -281,25 +281,25 @@ export default function AdminOrderDetail() {
         )}
 
         {/* Order Header */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-100">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6 border border-gray-100">
+          <div className="flex flex-col gap-4 mb-4 sm:mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
                 Order {order.order_number}
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-gray-600">
                 Placed on {formatDate(order.created_at)}
               </p>
             </div>
 
             {/* Status Dropdown */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <label className="text-sm font-medium text-gray-700">Status:</label>
               <select
                 value={order.status}
                 onChange={(e) => handleUpdateStatus(e.target.value)}
                 disabled={saving}
-                className={`px-4 py-2 border-2 rounded-lg font-semibold focus:ring-2 focus:ring-blue-500 bg-${currentColor}-50 border-${currentColor}-300 text-${currentColor}-800`}
+                className={`px-3 sm:px-4 py-2 text-sm sm:text-base border-2 rounded-lg font-semibold focus:ring-2 focus:ring-blue-500 bg-${currentColor}-50 border-${currentColor}-300 text-${currentColor}-800 w-full sm:w-auto`}
               >
                 <option value="pending">Pending</option>
                 <option value="reviewed">Reviewed</option>
@@ -310,32 +310,32 @@ export default function AdminOrderDetail() {
           </div>
 
           {/* Customer Info */}
-          <div className="grid md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
             <div>
-              <h3 className="text-sm font-semibold text-gray-700 mb-2">Customer Information</h3>
-              <div className="text-sm space-y-1">
+              <h3 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Customer Information</h3>
+              <div className="text-xs sm:text-sm space-y-1">
                 <p><span className="font-medium">Name:</span> {customer?.name || 'N/A'}</p>
                 <p><span className="font-medium">Phone:</span> {customer?.phone || 'N/A'}</p>
               </div>
             </div>
             {order.notes && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-2">Order Notes</h3>
-                <p className="text-sm text-gray-600">{order.notes}</p>
+                <h3 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2">Order Notes</h3>
+                <p className="text-xs sm:text-sm text-gray-600">{order.notes}</p>
               </div>
             )}
           </div>
         </div>
 
         {/* Order Items - Editable */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Order Items</h2>
-          <div className="space-y-4">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6 border border-gray-100">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Order Items</h2>
+          <div className="space-y-3 sm:space-y-4">
             {orderItems.map((item) => (
-              <div key={item.id} className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
-                <div className="flex gap-4">
+              <div key={item.id} className="p-3 sm:p-4 border-2 border-gray-200 rounded-lg hover:border-blue-300 transition-colors">
+                <div className="flex gap-3 sm:gap-4">
                   {/* Product Image */}
-                  <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
                     <Image
                       src={getProductImage(item.product)}
                       alt={item.product_name}
@@ -346,14 +346,14 @@ export default function AdminOrderDetail() {
                   </div>
 
                   {/* Product Info */}
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-1 truncate">
                       {item.product_name}
                     </h3>
                     {item.product_code && (
-                      <p className="text-xs text-gray-500 mb-2">Code: {item.product_code}</p>
+                      <p className="text-[10px] sm:text-xs text-gray-500 mb-1 sm:mb-2">Code: {item.product_code}</p>
                     )}
-                    <div className="text-xs text-gray-500 space-y-1">
+                    <div className="text-[10px] sm:text-xs text-gray-500 space-y-0.5 sm:space-y-1">
                       {item.product?.brand && <p>Brand: {item.product.brand}</p>}
                       {item.product?.car_model && <p>Model: {item.product.car_model}</p>}
                     </div>
@@ -361,24 +361,24 @@ export default function AdminOrderDetail() {
                 </div>
 
                 {/* Editable Fields */}
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-gray-200">
+                <div className="mt-3 sm:mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4 pt-3 sm:pt-4 border-t border-gray-200">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Quantity
+                    <label className="block text-[10px] sm:text-xs font-medium text-gray-700 mb-1">
+                      Qty
                     </label>
                     <input
                       type="number"
                       min="1"
                       value={item.quantity}
                       onChange={(e) => handleUpdatePrice(item.id, 'quantity', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
-                      Price per Unit (₹)
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="block text-[10px] sm:text-xs font-medium text-gray-700 mb-1">
+                      Price (₹)
                       {item.product?.price > 0 && !item.admin_price && (
-                        <span className="ml-2 text-xs text-blue-600">(Default: ₹{item.product.price})</span>
+                        <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs text-blue-600 hidden sm:inline">(Def: ₹{item.product.price})</span>
                       )}
                     </label>
                     <input
@@ -387,15 +387,15 @@ export default function AdminOrderDetail() {
                       step="0.01"
                       value={item.admin_price || ''}
                       onChange={(e) => handleUpdatePrice(item.id, 'admin_price', e.target.value)}
-                      placeholder={item.product?.price > 0 ? `Default: ${item.product.price}` : "Set price"}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder={item.product?.price > 0 ? `${item.product.price}` : "Price"}
+                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                  <div className="col-span-2 sm:col-span-1">
+                    <label className="block text-[10px] sm:text-xs font-medium text-gray-700 mb-1">
                       Total (₹)
                     </label>
-                    <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg font-semibold text-gray-900">
+                    <div className="px-2 sm:px-3 py-1.5 sm:py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg font-semibold text-gray-900">
                       {(() => {
                         // Calculate total: use admin_total if set, otherwise calculate from prices
                         if (item.admin_total > 0) return item.admin_total.toFixed(2)
@@ -404,14 +404,15 @@ export default function AdminOrderDetail() {
                       })()}
                     </div>
                   </div>
-                  <div className="flex items-end">
+                  <div className="col-span-2 sm:col-span-1 flex items-end">
                     {item.product?.slug && (
                       <Link
                         href={`/products/${item.product.slug}`}
                         target="_blank"
-                        className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium"
                       >
-                        View Product →
+                        <span className="hidden sm:inline">View Product →</span>
+                        <span className="sm:hidden">View →</span>
                       </Link>
                     )}
                   </div>
@@ -421,8 +422,8 @@ export default function AdminOrderDetail() {
           </div>
 
           {/* Order Total */}
-          <div className="mt-6 pt-6 border-t-2 border-gray-300">
-            <div className="flex justify-between items-center text-xl font-bold">
+          <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-2 border-gray-300">
+            <div className="flex justify-between items-center text-lg sm:text-xl font-bold">
               <span className="text-gray-700">Order Total:</span>
               <span className="text-blue-600">₹{calculateOrderTotal().toFixed(2)}</span>
             </div>
@@ -430,15 +431,15 @@ export default function AdminOrderDetail() {
         </div>
 
         {/* Actions */}
-        <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Actions</h2>
-          <div className="flex flex-wrap gap-4">
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Actions</h2>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <button
               onClick={handleGenerateInvoice}
               disabled={saving || order.status === 'invoiced'}
-              className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
             >
-              <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               Generate Invoice
@@ -447,9 +448,9 @@ export default function AdminOrderDetail() {
             {order.invoice_id && (
               <Link
                 href={`/admin/invoices/${order.invoice_id}`}
-                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all font-semibold shadow-md"
+                className="px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all font-semibold shadow-md text-center w-full sm:w-auto"
               >
-                <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>

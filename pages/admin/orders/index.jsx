@@ -136,48 +136,48 @@ export default function AdminOrders() {
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent mb-2">
             Orders Management
           </h1>
-          <p className="text-gray-600">Review and manage customer orders</p>
+          <p className="text-sm sm:text-base text-gray-600">Review and manage customer orders</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-gray-400">
-            <div className="text-sm text-gray-600 mb-1">Total Orders</div>
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-gray-400">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Total Orders</div>
+            <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.total}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-yellow-400">
-            <div className="text-sm text-gray-600 mb-1">Pending</div>
-            <div className="text-2xl font-bold text-yellow-700">{stats.pending}</div>
+          <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-yellow-400">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Pending</div>
+            <div className="text-xl sm:text-2xl font-bold text-yellow-700">{stats.pending}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-blue-400">
-            <div className="text-sm text-gray-600 mb-1">Reviewed</div>
-            <div className="text-2xl font-bold text-blue-700">{stats.reviewed}</div>
+          <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-blue-400">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Reviewed</div>
+            <div className="text-xl sm:text-2xl font-bold text-blue-700">{stats.reviewed}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-green-400">
-            <div className="text-sm text-gray-600 mb-1">Approved</div>
-            <div className="text-2xl font-bold text-green-700">{stats.approved}</div>
+          <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-green-400">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Approved</div>
+            <div className="text-xl sm:text-2xl font-bold text-green-700">{stats.approved}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-4 border-l-4 border-purple-400">
-            <div className="text-sm text-gray-600 mb-1">Invoiced</div>
-            <div className="text-2xl font-bold text-purple-700">{stats.invoiced}</div>
+          <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-purple-400 col-span-2 sm:col-span-1">
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Invoiced</div>
+            <div className="text-xl sm:text-2xl font-bold text-purple-700">{stats.invoiced}</div>
           </div>
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="flex flex-col gap-3 sm:gap-4">
             {/* Search */}
             <div className="flex-1">
               <input
                 type="text"
-                placeholder="Search by order number, customer name, or phone..."
+                placeholder="Search orders..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
 
@@ -193,7 +193,7 @@ export default function AdminOrders() {
                 <button
                   key={value}
                   onClick={() => setFilter(value)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base rounded-lg font-medium transition-colors ${
                     filter === value
                       ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -224,26 +224,26 @@ export default function AdminOrders() {
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gradient-to-r from-gray-50 to-blue-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Order #
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Items
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-2 sm:py-3 text-right text-[10px] sm:text-xs font-bold text-gray-700 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -253,29 +253,30 @@ export default function AdminOrders() {
                     const customer = customers[order.customer_id]
                     return (
                       <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="font-semibold text-gray-900">{order.order_number}</div>
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                          <div className="text-xs sm:text-sm font-semibold text-gray-900">{order.order_number}</div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">{customer?.name || 'Unknown'}</div>
-                          <div className="text-sm text-gray-500">{customer?.phone || 'N/A'}</div>
+                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                          <div className="text-xs sm:text-sm font-medium text-gray-900">{customer?.name || 'Unknown'}</div>
+                          <div className="text-[10px] sm:text-sm text-gray-500">{customer?.phone || 'N/A'}</div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-[10px] sm:text-sm text-gray-600">
                           {formatDate(order.created_at)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-600">
                           {order.order_items?.[0]?.count || 0} item(s)
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                           {getStatusBadge(order.status)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                        <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right">
                           <Link
                             href={`/admin/orders/${order.id}`}
-                            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all font-medium shadow-md"
+                            className="inline-flex items-center px-2 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all font-medium shadow-md"
                           >
-                            View Details
-                            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <span className="hidden sm:inline">View Details</span>
+                            <span className="sm:hidden">View</span>
+                            <svg className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                             </svg>
                           </Link>

@@ -13,12 +13,14 @@ export default function ContactPage() {
     name: 'Empire Car A/C',
     phoneNumber: '+917741077666',           // Format: +[country code][number]
     whatsappNumber: '917741077666',         // Format: [country code][number] (no + or spaces)
-    email: 'info@empirespareparts.com',
-    address: 'Shop Number 19, Usmaniya Masjid Complex, Bus stand road',
+    email: 'Zakirabdulfahim@gmail.com',
+    address: 'Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati',
     city: 'Amravati',
     state: 'Maharashtra',
     zipCode: '444601',
     country: 'India',
+    // Google Maps location link
+    locationUrl: 'https://maps.app.goo.gl/tBSGGr3LU2688G688?g_st=aw',
     // Google Maps embed URL (get from Google Maps > Share > Embed a map)
     mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.1422937950147!2d-73.98731968482413!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1234567890123!5m2!1sen!2sus'
   }

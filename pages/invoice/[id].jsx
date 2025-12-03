@@ -25,13 +25,13 @@ export default function PublicInvoicePage() {
   // Business information
   const businessInfo = {
     name: 'Empire Car A/C',
-    address: 'Shop Number 19, Usmaniya Masjid Complex, Bus stand road',
+    address: 'Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati',
     city: 'Amravati',
     state: 'Maharashtra',
     zipCode: '444601',
     phone: '+917741077666',
-    email: 'info@empirespareparts.com',
-    website: 'www.empirespareparts.com'
+    email: 'Zakirabdulfahim@gmail.com',
+    website: 'https://www.empirecarac.in/'
   };
 
   useEffect(() => {

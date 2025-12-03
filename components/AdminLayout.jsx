@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import Link from 'next/link'
 import Logo from './Logo'
 import NotificationBell from './NotificationBell'
@@ -65,7 +66,11 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <>
+      <Head>
+        <link rel="manifest" href="/admin-manifest.json" />
+      </Head>
+      <div className="min-h-screen bg-gray-100">
       {/* Top Navigation Bar */}
       <nav className="bg-gradient-to-r from-white via-slate-50 to-blue-50 shadow-lg fixed top-0 left-0 right-0 z-40 backdrop-blur-sm">
         <div className="flex items-center justify-between px-3 sm:px-4 h-16">
@@ -220,6 +225,7 @@ export default function AdminLayout({ children }) {
 
       {/* PWA Install Prompt - Only show in admin */}
       <PWAInstallPrompt />
-    </div>
+      </div>
+    </>
   )
 }

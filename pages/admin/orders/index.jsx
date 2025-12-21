@@ -19,11 +19,7 @@ export default function AdminOrders() {
     total: 0,
     pending: 0,
     quotation_sent: 0,
-    quote_approved: 0,
-    payment_pending: 0,
     payment_received: 0,
-    processing: 0,
-    ready_for_pickup: 0,
     completed: 0,
     cancelled: 0,
   })
@@ -87,11 +83,7 @@ export default function AdminOrders() {
       total: ordersData.length,
       pending: ordersData.filter(o => o.status === 'pending').length,
       quotation_sent: ordersData.filter(o => o.status === 'quotation_sent').length,
-      quote_approved: ordersData.filter(o => o.status === 'quote_approved').length,
-      payment_pending: ordersData.filter(o => o.status === 'payment_pending').length,
       payment_received: ordersData.filter(o => o.status === 'payment_received').length,
-      processing: ordersData.filter(o => o.status === 'processing').length,
-      ready_for_pickup: ordersData.filter(o => o.status === 'ready_for_pickup').length,
       completed: ordersData.filter(o => o.status === 'completed').length,
       cancelled: ordersData.filter(o => o.is_cancelled || o.status === 'cancelled').length,
     }
@@ -150,30 +142,22 @@ export default function AdminOrders() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 mb-4 sm:mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-4 sm:mb-6">
           <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-gray-400">
-            <div className="text-xs sm:text-sm text-gray-600 mb-1">Total</div>
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Total Orders</div>
             <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.total}</div>
           </div>
           <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-yellow-400">
-            <div className="text-xs sm:text-sm text-gray-600 mb-1">Pending</div>
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">New Orders</div>
             <div className="text-xl sm:text-2xl font-bold text-yellow-700">{stats.pending}</div>
           </div>
           <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-blue-400">
-            <div className="text-xs sm:text-sm text-gray-600 mb-1">Quotations</div>
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Quotation Sent</div>
             <div className="text-xl sm:text-2xl font-bold text-blue-700">{stats.quotation_sent}</div>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-amber-400">
-            <div className="text-xs sm:text-sm text-gray-600 mb-1">Payment Due</div>
-            <div className="text-xl sm:text-2xl font-bold text-amber-700">{stats.payment_pending}</div>
-          </div>
           <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-green-400">
-            <div className="text-xs sm:text-sm text-gray-600 mb-1">Processing</div>
-            <div className="text-xl sm:text-2xl font-bold text-green-700">{stats.processing}</div>
-          </div>
-          <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-purple-400">
-            <div className="text-xs sm:text-sm text-gray-600 mb-1">Ready</div>
-            <div className="text-xl sm:text-2xl font-bold text-purple-700">{stats.ready_for_pickup}</div>
+            <div className="text-xs sm:text-sm text-gray-600 mb-1">Paid</div>
+            <div className="text-xl sm:text-2xl font-bold text-green-700">{stats.payment_received}</div>
           </div>
           <div className="bg-white rounded-xl shadow-md p-3 sm:p-4 border-l-4 border-emerald-400">
             <div className="text-xs sm:text-sm text-gray-600 mb-1">Completed</div>
@@ -202,14 +186,10 @@ export default function AdminOrders() {
             {/* Filter Tabs */}
             <div className="flex flex-wrap gap-2">
               {[
-                { value: 'all', label: 'All' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'quotation_sent', label: 'Quotations' },
-                { value: 'quote_approved', label: 'Quote Approved' },
-                { value: 'payment_pending', label: 'Payment Due' },
+                { value: 'all', label: 'All Orders' },
+                { value: 'pending', label: 'New Orders' },
+                { value: 'quotation_sent', label: 'Quotation Sent' },
                 { value: 'payment_received', label: 'Paid' },
-                { value: 'processing', label: 'Processing' },
-                { value: 'ready_for_pickup', label: 'Ready' },
                 { value: 'completed', label: 'Completed' },
                 { value: 'cancelled', label: 'Cancelled' },
               ].map(({ value, label }) => (

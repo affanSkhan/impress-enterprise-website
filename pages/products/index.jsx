@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
@@ -11,14 +12,25 @@ import { supabase } from '@/lib/supabaseClient'
  * Products Catalogue Page
  * Public page displaying all active products with filtering
  * Phase 2: Enhanced with live data fetching, responsive grid, and SEO
+ * Filters persist in URL query parameters for better UX
  */
 export default function ProductsPage() {
+  const router = useRouter()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
   const [totalProducts, setTotalProducts] = useState(0)
+
+  // Initialize filters from URL on mount
+  useEffect(() => {
+    if (router.isReady) {
+      const { category, search } = router.query
+      if (category) setSelectedCategory(category)
+      if (search) setSearchTerm(search)
+    }
+  }, [router.isReady])
 
   // Fetch categories on mount
   useEffect(() => {
@@ -27,8 +39,10 @@ export default function ProductsPage() {
 
   // Fetch products when filters change
   useEffect(() => {
-    fetchProducts()
-  }, [selectedCategory, searchTerm])
+    if (router.isReady) {
+      fetchProducts()
+    }
+  }, [selectedCategory, searchTerm, router.isReady])
 
   async function fetchCategories() {
     const { data, error } = await supabase
@@ -75,10 +89,39 @@ export default function ProductsPage() {
     setLoading(false)
   }
 
+  // Update URL when filters change
+  function updateFilters(category, search) {
+    const query = {}
+    if (category && category !== 'all') query.category = category
+    if (search) query.search = search
+
+    router.push(
+      {
+        pathname: '/products',
+        query,
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
+
+  // Handle category change
+  function handleCategoryChange(category) {
+    setSelectedCategory(category)
+    updateFilters(category, searchTerm)
+  }
+
+  // Handle search change
+  function handleSearchChange(search) {
+    setSearchTerm(search)
+    updateFilters(selectedCategory, search)
+  }
+
   // Clear search
   function clearSearch() {
     setSearchTerm('')
     setSelectedCategory('all')
+    router.push('/products', undefined, { shallow: true })
   }
 
   return (
@@ -102,7 +145,7 @@ export default function ProductsPage() {
         <link rel="canonical" href="https://yoursite.com/products" />
       </Head>
 
-      <Navbar />
+      <Navbar />handleSearchChange
 
       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-6 sm:py-8 lg:py-12">
         <div className="container mx-auto px-4">
@@ -135,7 +178,7 @@ export default function ProductsPage() {
                   />
                   {searchTerm && (
                     <button
-                      onClick={() => setSearchTerm('')}
+                      onClick={() => handleSearchChange('')}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       aria-label="Clear search"
                     >
@@ -151,7 +194,7 @@ export default function ProductsPage() {
               <CategoryFilter
                 categories={categories}
                 selectedCategory={selectedCategory}
-                onCategoryChange={setSelectedCategory}
+                onCategoryChange={handleCategoryChange}
               />
             </div>
 
@@ -162,7 +205,7 @@ export default function ProductsPage() {
                 {searchTerm && (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary-100 text-primary-800">
                     Search: "{searchTerm}"
-                    <button onClick={() => setSearchTerm('')} className="ml-2">
+                    <button onClick={() => handleSearchChange('')} className="ml-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -172,7 +215,7 @@ export default function ProductsPage() {
                 {selectedCategory !== 'all' && (
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary-100 text-primary-800">
                     Category: {categories.find(c => c.id === selectedCategory)?.name}
-                    <button onClick={() => setSelectedCategory('all')} className="ml-2">
+                    <button onClick={() => handleCategoryChange('all')} className="ml-2">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>

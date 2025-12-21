@@ -204,6 +204,17 @@ export default function ProductDetailsPage() {
   const pageTitle = `${product.name} - Empire Spare Parts`
   const pageDescription = product.description || `${product.name} spare part for ${product.car_model || 'vehicles'}. Contact us for pricing and availability.`
 
+  // Build back URL with preserved filters
+  const buildBackUrl = () => {
+    const { category, search } = router.query
+    const query = new URLSearchParams()
+    if (category) query.set('category', category)
+    if (search) query.set('search', search)
+    
+    const queryString = query.toString()
+    return `/products${queryString ? `?${queryString}` : ''}`
+  }
+
   return (
     <>
       <Head>
@@ -247,7 +258,7 @@ export default function ProductDetailsPage() {
                 </svg>
               </li>
               <li>
-                <Link href="/products" className="hover:text-primary-600">Products</Link>
+                <Link href={buildBackUrl()} className="hover:text-primary-600">Products</Link>
               </li>
               {product.category && (
                 <>

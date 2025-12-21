@@ -84,8 +84,19 @@ export default function ProductCard({ product }) {
     }
   }
 
+  // Build product URL with preserved query params
+  const buildProductUrl = () => {
+    const { category, search } = router.query
+    const query = new URLSearchParams()
+    if (category) query.set('category', category)
+    if (search) query.set('search', search)
+    
+    const queryString = query.toString()
+    return `/products/${product.slug}${queryString ? `?${queryString}` : ''}`
+  }
+
   return (
-    <Link href={`/products/${product.slug}`}>
+    <Link href={buildProductUrl()}>
       <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer h-full flex flex-col transform hover:-translate-y-2 border border-gray-100">
         {/* Product Image */}
         <div className="relative h-48 sm:h-56 bg-gray-100">

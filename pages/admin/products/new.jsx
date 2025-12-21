@@ -17,6 +17,7 @@ export default function NewProductPage() {
     brand: '',
     description: '',
     price: '',
+    stock_quantity: '',
     is_active: true,
   });
   const [toast, setToast] = useState(null);
@@ -78,19 +79,18 @@ export default function NewProductPage() {
 
       const { data, error } = await supabase
         .from('products')
-        .insert([
-          {
-            name: formData.name.trim(),
-            slug: formData.slug.trim(),
-            category_id: formData.category_id,
-            car_model: formData.car_model.trim() || null,
-            brand: formData.brand.trim() || null,
-            description: formData.description.trim() || null,
-            price: formData.price ? parseFloat(formData.price) : 0,
-            is_active: formData.is_active,
-          },
-        ])
-        .select()
+        .insert({
+          name: formData.name.trim(),
+          slug: formData.slug.trim(),
+          category_id: formData.category_id,
+          car_model: formData.car_model.trim() || null,
+          brand: formData.brand.trim() || null,
+          description: formData.description.trim() || null,
+          price: formData.price ? parseFloat(formData.price) : 0,
+          stock_quantity: formData.stock_quantity ? parseInt(formData.stock_quantity) : 0,
+          is_active: formData.is_active,
+        })
+        .select('*')
         .single();
 
       if (error) throw error;
@@ -247,6 +247,26 @@ export default function NewProductPage() {
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   This price will be used as default when generating invoices
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="stock_quantity" className="block text-sm font-medium text-gray-700 mb-2">
+                  Stock Quantity
+                </label>
+                <input
+                  type="number"
+                  id="stock_quantity"
+                  name="stock_quantity"
+                  value={formData.stock_quantity}
+                  onChange={handleChange}
+                  min="0"
+                  step="1"
+                  className="input-field"
+                  placeholder="0"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Current stock available (alerts when ≤ 5)
                 </p>
               </div>
 

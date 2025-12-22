@@ -159,6 +159,25 @@ export default function CartPage() {
 
       if (clearError) throw clearError
 
+      // Send push notification to admins about new order
+      try {
+        await fetch('/api/push/send', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'New Order Received',
+            message: `Order #${orderNumber} has been placed by ${customer.name || 'a customer'}`,
+            url: `/admin/orders/${orderData.id}`,
+            userType: 'admin'
+          })
+        })
+      } catch (pushError) {
+        // Don't fail the order if push notification fails
+        console.warn('Failed to send push notification:', pushError)
+      }
+
       // Trigger cart update event for navbar
       window.dispatchEvent(new Event('cart-updated'))
 

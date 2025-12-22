@@ -15,11 +15,20 @@ export default async function handler(req, res) {
   try {
     const { subscription, userId } = req.body
 
+    console.log('Subscribe API called for user:', userId);
+
     if (!subscription || !userId) {
+      console.error('Missing subscription or userId');
       return res.status(400).json({ error: 'Subscription and userId are required' })
     }
 
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('SUPABASE_SERVICE_ROLE_KEY not set');
+      return res.status(500).json({ error: 'Server configuration error: Service role key not set' })
+    }
+
     // Use admin client to bypass RLS
+    console.log('Saving subscription to database...');
     const { data, error } = await supabaseAdmin
       .from('push_subscriptions')
       .upsert({
@@ -33,9 +42,14 @@ export default async function handler(req, res) {
 
     if (error) {
       console.error('Error saving push subscription:', error)
-      return res.status(500).json({ error: error.message })
+      return res.status(500).json({ 
+        error: error.message,
+        details: error.details,
+        hint: error.hint
+      })
     }
 
+    console.log('Push subscription saved successfully');
     res.status(200).json({ 
       success: true, 
       message: 'Push subscription saved successfully' 

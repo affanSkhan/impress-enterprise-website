@@ -52,34 +52,40 @@ export async function requestNotificationPermission() {
  */
 export async function subscribeToPushNotifications(userId) {
   try {
+    console.log('Starting push notification subscription...');
+    console.log('VAPID key available:', !!VAPID_PUBLIC_KEY);
+    console.log('User ID:', userId);
+
     // Check if service worker is supported
     if (!('serviceWorker' in navigator)) {
-      console.warn('Service Worker not supported');
-      return null;
+      console.error('Service Worker not supported');
+      throw new Error('Service Worker not supported in this browser');
     }
 
     // Check if push is supported
     if (!('PushManager' in window)) {
-      console.warn('Push notifications not supported');
-      return null;
+      console.error('Push notifications not supported');
+      throw new Error('Push notifications not supported in this browser');
     }
 
     // Request permission
     const hasPermission = await requestNotificationPermission();
     if (!hasPermission) {
-      console.warn('Notification permission not granted');
-      return null;
+      console.error('Notification permission not granted');
+      throw new Error('Notification permission not granted');
     }
 
     // Register service worker if not already registered
     let registration = await navigator.serviceWorker.getRegistration();
     if (!registration) {
+      console.log('Registering service worker...');
       registration = await navigator.serviceWorker.register('/sw.js');
       console.log('Service Worker registered for push notifications');
     }
 
     // Wait for service worker to be ready
     await navigator.serviceWorker.ready;
+    console.log('Service worker ready');
 
     // Check for existing subscription and unsubscribe if it exists
     const existingSubscription = await registration.pushManager.getSubscription();
@@ -90,15 +96,19 @@ export async function subscribeToPushNotifications(userId) {
 
     // Subscribe to push notifications with new VAPID key
     if (!VAPID_PUBLIC_KEY) {
-      throw new Error('VAPID public key not found. Please check your environment variables.');
+      console.error('VAPID_PUBLIC_KEY is not set');
+      throw new Error('VAPID public key not configured. Please add NEXT_PUBLIC_VAPID_PUBLIC_KEY to environment variables and redeploy.');
     }
     
+    console.log('Subscribing to push manager...');
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
     });
+    console.log('Push subscription created:', subscription.endpoint);
 
     // Save subscription to backend
+    console.log('Saving subscription to backend...');
     const response = await fetch('/api/push/subscribe', {
       method: 'POST',
       headers: {
@@ -111,7 +121,9 @@ export async function subscribeToPushNotifications(userId) {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to save push subscription');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Failed to save subscription:', response.status, errorData);
+      throw new Error(`Failed to save push subscription: ${errorData.error || response.statusText}`);
     }
 
     console.log('Successfully subscribed to push notifications');

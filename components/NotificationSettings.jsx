@@ -60,16 +60,24 @@ export default function NotificationSettings({ userId }) {
           setPermission('granted');
         }
 
+        // Check if VAPID key is available
+        if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
+          console.error('VAPID key missing in environment');
+          setError('Configuration error: VAPID key not set. Please contact administrator.');
+          setLoading(false);
+          return;
+        }
+
         const subscription = await subscribeToPushNotifications(userId);
         if (subscription) {
           setIsSubscribed(true);
         } else {
-          setError('Failed to enable notifications');
+          setError('Failed to enable notifications. Check browser console for details.');
         }
       }
     } catch (err) {
       console.error('Notification toggle error:', err);
-      setError(err.message || 'An error occurred');
+      setError(err.message || 'An error occurred. Check browser console for details.');
     } finally {
       setLoading(false);
     }

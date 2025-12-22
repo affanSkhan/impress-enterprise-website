@@ -249,7 +249,6 @@ export default function PushTest() {
             </button>
           </div>
         </div>
-        <h1 className="text-2xl font-bold mb-6">Push Notification Test Suite</h1>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <button
@@ -294,25 +293,14 @@ export default function PushTest() {
             onClick={runAllTests}
             disabled={loading}
             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50 col-span-2"
-          >📋 Testing Steps:</h3>
-          <ol className="list-decimal ml-5 text-sm space-y-1">
-            <li><strong>Enable Push</strong> - Click the green "Enable Push" button above</li>
-            <li><strong>Run Tests</strong> - Click "Run All Tests" to verify everything works</li>
-            <li><strong>Test Background</strong> - Close this tab, open on another device, and click "Direct Send"</li>
-            <li><strong>Verify</strong> - You should receive notification even with app closed!</li>
-          </ol>
+          >
+            Run All Tests
+          </button>
         </div>
 
-        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="font-semibold mb-2">ℹ️ What Each Test Does:</h3>
-          <ul className="list-disc ml-5 text-sm space-y-1">
-            <li><strong>Check Permission:</strong> Verifies browser allows notifications</li>
-            <li><strong>Check SW:</strong> Verifies service worker is registered</li>
-            <li><strong>Check Subscription:</strong> Verifies this device has a push subscription</li>
-            <li><strong>Local Test:</strong> Tests notification display (no backend)</li>
-            <li><strong>Test API:</strong> Tests the /api/push/test endpoint</li>
-            <li><strong>Direct Send:</strong> Sends push to ALL subscribed admin devices</li>
-          </udiv className="text-gray-500">Click a test button to begin...</div>
+        <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm text-green-400 h-96 overflow-y-auto">
+          {logs.length === 0 ? (
+            <div className="text-gray-500">Click a test button to begin...</div>
           ) : (
             logs.map((log, index) => (
               <div
@@ -330,14 +318,25 @@ export default function PushTest() {
         </div>
 
         <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="font-semibold mb-2">Instructions:</h3>
+          <h3 className="font-semibold mb-2">📋 Testing Steps:</h3>
           <ol className="list-decimal ml-5 text-sm space-y-1">
-            <li>Click "Run All Tests" to check everything</li>
-            <li>Make sure notifications are enabled in browser settings</li>
-            <li>"Local Test" should work immediately (tests service worker)</li>
-            <li>"Direct Send" tests the full backend → push → notification flow</li>
-            <li>Close the app/PWA and try "Direct Send" to test background notifications</li>
+            <li><strong>Enable Push</strong> - Click the green "Enable Push" button above</li>
+            <li><strong>Run Tests</strong> - Click "Run All Tests" to verify everything works</li>
+            <li><strong>Test Background</strong> - Close this tab, open on another device, and click "Direct Send"</li>
+            <li><strong>Verify</strong> - You should receive notification even with app closed!</li>
           </ol>
+        </div>
+
+        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="font-semibold mb-2">ℹ️ What Each Test Does:</h3>
+          <ul className="list-disc ml-5 text-sm space-y-1">
+            <li><strong>Check Permission:</strong> Verifies browser allows notifications</li>
+            <li><strong>Check SW:</strong> Verifies service worker is registered</li>
+            <li><strong>Check Subscription:</strong> Verifies this device has a push subscription</li>
+            <li><strong>Local Test:</strong> Tests notification display (no backend)</li>
+            <li><strong>Test API:</strong> Tests the /api/push/test endpoint</li>
+            <li><strong>Direct Send:</strong> Sends push to ALL subscribed admin devices</li>
+          </ul>
         </div>
       </div>
     </AdminLayout>

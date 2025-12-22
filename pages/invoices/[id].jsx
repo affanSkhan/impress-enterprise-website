@@ -55,6 +55,15 @@ export default function PublicInvoicePage() {
         return;
       }
       
+      // Fetch related order status
+      const { data: orderData } = await supabase
+        .from('orders')
+        .select('status')
+        .eq('invoice_id', id)
+        .single();
+      
+      // Attach order data to invoice
+      invoiceData.order = orderData;
       setInvoice(invoiceData);
 
       // Fetch invoice items
@@ -138,7 +147,20 @@ export default function PublicInvoicePage() {
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6 sm:p-8">
+          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6 sm:p-8 relative">
+            {/* Dispatched Stamp - Show if order is completed */}
+            {invoice.order?.status === 'completed' && (
+              <div className="absolute top-4 right-4 transform rotate-12 z-10">
+                <div className="border-4 border-green-500 rounded-lg px-6 py-3 bg-white/90 shadow-lg">
+                  <div className="text-green-600 font-bold text-xl tracking-wider">
+                    DISPATCHED
+                  </div>
+                  <div className="text-green-500 text-xs text-center mt-1">
+                    ✓ DELIVERED
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
               {/* Logo */}
               <div className="relative w-20 h-20 bg-white rounded-lg p-2 flex-shrink-0">

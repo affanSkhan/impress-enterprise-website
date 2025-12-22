@@ -6,6 +6,7 @@ import Logo from './Logo'
 import NotificationBell from './NotificationBell'
 import PWAInstallPrompt from './PWAInstallPrompt'
 import { supabase } from '@/lib/supabaseClient'
+import { subscribeToPushNotifications } from '@/utils/pushNotifications'
 
 /**
  * Admin Layout Component
@@ -38,19 +39,27 @@ export default function AdminLayout({ children }) {
     return () => subscription.unsubscribe()
   }, [router])
 
-  // Register Service Worker for PWA
+  // Register Service Worker for PWA and Push Notifications
   useEffect(() => {
-    if ('serviceWorker' in navigator && router.pathname.startsWith('/admin')) {
+    if ('serviceWorker' in navigator && router.pathname.startsWith('/admin') && user) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((registration) => {
+        .then(async (registration) => {
           console.log('Service Worker registered successfully:', registration.scope);
+          
+          // Subscribe to push notifications after service worker is registered
+          try {
+            await subscribeToPushNotifications(user.id);
+            console.log('Successfully subscribed to push notifications');
+          } catch (error) {
+            console.error('Failed to subscribe to push notifications:', error);
+          }
         })
         .catch((error) => {
           console.error('Service Worker registration failed:', error);
         });
     }
-  }, [router.pathname])
+  }, [router.pathname, user])
 
   async function handleLogout() {
     await supabase.auth.signOut()

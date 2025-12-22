@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import CustomerNotificationBell from './CustomerNotificationBell'
 import useSimpleAuth from '@/hooks/useSimpleAuth'
 
 /**
@@ -87,6 +88,9 @@ export default function CustomerLayout({ children }) {
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Notification Bell */}
+              <CustomerNotificationBell />
+              
               <span className="text-sm text-gray-600 hidden sm:inline">
                 {customer.name}
               </span>

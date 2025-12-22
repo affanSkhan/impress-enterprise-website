@@ -103,30 +103,82 @@ self.addEventListener('sync', (event) => {
   }
 });
 
-// Push notification handler (future enhancement)
+// Push notification handler with sound and vibration
 self.addEventListener('push', (event) => {
+  console.log('[Service Worker] Push notification received:', event);
+  
   if (event.data) {
     const data = event.data.json();
     const options = {
-      body: data.body || 'New notification',
+      body: data.body || data.message || 'New notification',
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-72x72.png',
-      vibrate: [200, 100, 200],
+      image: data.image,
+      vibrate: [300, 100, 200, 100, 300], // Vibration pattern
+      tag: data.tag || 'notification',
+      requireInteraction: true, // Keeps notification visible until user interacts
+      renotify: true, // Re-alert even if same tag
+      silent: false, // Play sound
       data: {
-        url: data.url || '/admin',
+        url: data.url || data.link || '/admin',
+        notificationId: data.id,
       },
+      actions: [
+        {
+          action: 'open',
+          title: 'View',
+          icon: '/icons/icon-72x72.png'
+        },
+        {
+          action: 'close',
+          title: 'Dismiss',
+          icon: '/icons/icon-72x72.png'
+        }
+      ],
+      // Additional options for better mobile support
+      timestamp: Date.now(),
     };
 
     event.waitUntil(
-      self.registration.showNotification(data.title || 'Empire Admin', options)
+      self.registration.showNotification(
+        data.title || 'Empire Car A/C', 
+        options
+      )
     );
   }
 });
 
 // Notification click handler
 self.addEventListener('notificationclick', (event) => {
+  console.log('[Service Worker] Notification clicked:', event);
+  
   event.notification.close();
+
+  if (event.action === 'close') {
+    // User dismissed the notification
+    return;
+  }
+
+  // Open or focus the app
   event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/admin')
+    clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((clientList) => {
+        const url = event.notification.data.url || '/admin';
+        
+        // Check if there's already a window open
+        for (let client of clientList) {
+          if (client.url.includes('/admin') && 'focus' in client) {
+            return client.focus().then(() => {
+              // Navigate to the notification URL
+              return client.navigate(url);
+            });
+          }
+        }
+        
+        // If no window is open, open a new one
+        if (clients.openWindow) {
+          return clients.openWindow(url);
+        }
+      })
   );
 });

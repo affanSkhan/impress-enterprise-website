@@ -38,6 +38,7 @@ export default function PublicInvoicePage() {
     if (id) {
       fetchInvoice();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function fetchInvoice() {
@@ -59,6 +60,15 @@ export default function PublicInvoicePage() {
         return;
       }
       
+      // Fetch related order status
+      const { data: orderData } = await supabase
+        .from('orders')
+        .select('status')
+        .eq('invoice_id', id)
+        .single();
+      
+      // Attach order data to invoice
+      invoiceData.order = orderData;
       setInvoice(invoiceData);
 
       // Fetch invoice items
@@ -98,6 +108,32 @@ export default function PublicInvoicePage() {
       doc.setFontSize(20);
       doc.setFont('helvetica', 'bold');
       doc.text(businessInfo.name, logoX + logoSize + 3, yPos + 8);
+      
+      // Add DISPATCHED stamp if order is completed
+      if (invoice.order?.status === 'completed') {
+        // Save current state
+        const stampX = pageWidth - 55;
+        const stampY = yPos;
+        
+        // Draw green border rectangle
+        doc.setDrawColor(34, 197, 94); // Green
+        doc.setLineWidth(1.5);
+        doc.rect(stampX, stampY, 45, 18);
+        
+        // Add "DISPATCHED" text
+        doc.setFontSize(14);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(34, 197, 94); // Green
+        doc.text('DISPATCHED', stampX + 22.5, stampY + 10, { align: 'center' });
+        
+        // Add "DELIVERED" text
+        doc.setFontSize(8);
+        doc.text('DELIVERED', stampX + 22.5, stampY + 15, { align: 'center' });
+        
+        // Reset colors
+        doc.setTextColor(0, 0, 0);
+        doc.setDrawColor(0, 0, 0);
+      }
       
       yPos += 23;
       doc.setFontSize(10);
@@ -287,7 +323,21 @@ export default function PublicInvoicePage() {
             </div>
 
             {/* Invoice Content */}
-            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
+            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8 relative">
+              {/* Dispatched Stamp - Show if order is completed */}
+              {invoice.order?.status === 'completed' && (
+                <div className="absolute top-4 right-4 transform rotate-12 z-10 print:block">
+                  <div className="border-4 border-green-500 rounded-lg px-4 sm:px-6 py-2 sm:py-3 bg-white shadow-lg">
+                    <div className="text-green-600 font-bold text-lg sm:text-xl tracking-wider">
+                      DISPATCHED
+                    </div>
+                    <div className="text-green-500 text-xs text-center mt-1">
+                      ✓ DELIVERED
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {/* Business Header */}
               <div className="mb-6 sm:mb-8 border-b pb-4 sm:pb-6">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">

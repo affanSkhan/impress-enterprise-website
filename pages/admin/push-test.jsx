@@ -161,9 +161,9 @@ export default function PushTest() {
           addLog('⚠️ Push send failed - checking details...', 'error')
           data.results.forEach((result, i) => {
             if (!result.success) {
-              addLog(`  Error ${i + 1}: ${result.error}`, 'error')
+              addLog(`  Error ${i + 1}: ${result.error || JSON.stringify(result)}`, 'error')
               if (result.statusCode) addLog(`  Status Code: ${result.statusCode}`, 'error')
-              if (result.body) addLog(`  Body: ${result.body}`, 'error')
+              if (result.body) addLog(`  Body: ${JSON.stringify(result.body)}`, 'error')
             }
           })
         }

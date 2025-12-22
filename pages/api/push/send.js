@@ -1,10 +1,19 @@
 import webpush from 'web-push'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@supabase/supabase-js'
+
+// Create a Supabase admin client with service role for bypassing RLS
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+)
 
 // Configure web-push with VAPID keys
-// Generate keys with: npx web-push generate-vapid-keys
-const vapidPublicKey = process.env.VAPID_PUBLIC_KEY || 'BEl62iUYgUivxIkv69yViEuiBIa-Ib27SsgRa4t0xZW3C0U5WtWDQV2GxBmwR5RVzlKxXy6PctMHvBMPHZQP7xg'
-const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || 'UUxEqXfb-6PEiAqb9XFZXQnT8ULp_PvLXhPwEzEW8eQ'
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY
+
+if (!vapidPublicKey || !vapidPrivateKey) {
+  console.error('VAPID keys not configured!')
+}
 
 webpush.setVapidDetails(
   'mailto:admin@empirecarac.in',
@@ -22,8 +31,14 @@ export default async function handler(req, res) {
 
     console.log('Push send API called:', { title, message, url, userId, userType });
 
+    // Verify VAPID keys are set
+    if (!vapidPublicKey || !vapidPrivateKey) {
+      console.error('VAPID keys missing!');
+      return res.status(500).json({ error: 'Server configuration error: VAPID keys not set' });
+    }
+
     // Get all subscriptions for the specified user type
-    let query = supabase
+    let query = supabaseAdmin
       .from('push_subscriptions')
       .select('*')
 
@@ -33,13 +48,19 @@ export default async function handler(req, res) {
     } else if (userType) {
       // Get all admin users
       console.log('Querying admin users...');
-      const { data: admins } = await supabase
+      const { data: admins } = await supabaseAdmin
         .from('user_roles')
         .select('user_id')
         .in('role', ['admin', 'staff'])
 
       console.log('Found admin users:', admins?.length);
       const adminIds = admins?.map(a => a.user_id) || []
+      
+      if (adminIds.length === 0) {
+        console.error('No admin users found');
+        return res.status(404).json({ error: 'No admin users found' });
+      }
+      
       query = query.in('user_id', adminIds)
     }
 
@@ -70,7 +91,7 @@ export default async function handler(req, res) {
         tag: 'notification-' + Date.now(),
         timestamp: Date.now()
       })
-
+Admin
       try {
         console.log('Sending push to endpoint:', sub.endpoint.substring(0, 50) + '...');
         await webpush.sendNotification(sub.subscription, payload)

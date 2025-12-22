@@ -105,17 +105,25 @@ self.addEventListener('sync', (event) => {
 
 // Push notification handler with sound and vibration
 self.addEventListener('push', (event) => {
-  console.log('[Service Worker] Push notification received:', event);
+  console.log('[Service Worker] Push notification received!');
+  console.log('[Service Worker] Push event:', event);
   
-  if (event.data) {
+  if (!event.data) {
+    console.log('[Service Worker] No data in push event');
+    return;
+  }
+
+  try {
     const data = event.data.json();
+    console.log('[Service Worker] Push data:', data);
+    
     const options = {
       body: data.body || data.message || 'New notification',
       icon: '/icons/icon-192x192.png',
       badge: '/icons/icon-72x72.png',
       image: data.image,
       vibrate: [300, 100, 200, 100, 300], // Vibration pattern
-      tag: data.tag || 'notification',
+      tag: data.tag || 'notification-' + Date.now(),
       requireInteraction: true, // Keeps notification visible until user interacts
       renotify: true, // Re-alert even if same tag
       silent: false, // Play sound
@@ -136,15 +144,23 @@ self.addEventListener('push', (event) => {
         }
       ],
       // Additional options for better mobile support
-      timestamp: Date.now(),
+      timestamp: data.timestamp || Date.now(),
     };
+
+    console.log('[Service Worker] Showing notification with options:', options);
 
     event.waitUntil(
       self.registration.showNotification(
         data.title || 'Empire Car A/C', 
         options
-      )
+      ).then(() => {
+        console.log('[Service Worker] Notification displayed successfully');
+      }).catch(error => {
+        console.error('[Service Worker] Error showing notification:', error);
+      })
     );
+  } catch (error) {
+    console.error('[Service Worker] Error parsing push data:', error);
   }
 });
 

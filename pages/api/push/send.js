@@ -91,7 +91,7 @@ export default async function handler(req, res) {
         tag: 'notification-' + Date.now(),
         timestamp: Date.now()
       })
-Admin
+
       try {
         console.log('Sending push to endpoint:', sub.endpoint.substring(0, 50) + '...');
         console.log('Using VAPID public key:', vapidPublicKey?.substring(0, 20) + '...');

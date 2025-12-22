@@ -115,7 +115,13 @@ Admin
             .eq('id', sub.id)
         }
         
-        return { success: false, endpoint: sub.endpoint, error: error.message, statusCode: error.statusCode, body: error.body }
+        return { 
+          success: false, 
+          endpoint: sub.endpoint, 
+          error: error.message || String(error), 
+          statusCode: error.statusCode,
+          body: error.body ? (typeof error.body === 'string' ? error.body : JSON.stringify(error.body)) : undefined
+        }
       }
     })
 

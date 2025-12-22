@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Head from 'next/head'
 import AdminLayout from '@/components/AdminLayout'
 import useAdminAuth from '@/hooks/useAdminAuth'
+import { subscribeToPushNotifications, unsubscribeFromPushNotifications, isPushSubscribed } from '@/utils/pushNotifications'
 
 /**
  * Push Notification Test Page
@@ -11,6 +12,7 @@ export default function PushTest() {
   const { user, loading: authLoading } = useAdminAuth()
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(false)
+  const [isSubscribed, setIsSubscribed] = useState(false)
 
   function addLog(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString()
@@ -39,11 +41,59 @@ export default function PushTest() {
       if (subscription) {
         addLog('✓ Subscription exists', 'success')
         addLog(`Endpoint: ${subscription.endpoint.substring(0, 50)}...`)
+        setIsSubscribed(true)
       } else {
         addLog('✗ No subscription found', 'error')
+        addLog('💡 Click "Enable Push" to subscribe', 'info')
+        setIsSubscribed(false)
       }
     } catch (error) {
       addLog(`Error checking subscription: ${error.message}`, 'error')
+      setIsSubscribed(false)
+    }
+  }
+
+  async function enablePush() {
+    setLoading(true)
+    addLog('Enabling push notifications...')
+    try {
+      if (!user?.id) {
+        addLog('✗ User ID not found', 'error')
+        return
+      }
+
+      const subscription = await subscribeToPushNotifications(user.id)
+      
+      if (subscription) {
+        addLog('✓ Push notifications enabled!', 'success')
+        addLog(`Endpoint: ${subscription.endpoint.substring(0, 50)}...`)
+        setIsSubscribed(true)
+      } else {
+        addLog('✗ Failed to enable push', 'error')
+      }
+    } catch (error) {
+      addLog(`✗ Error: ${error.message}`, 'error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function disablePush() {
+    setLoading(true)
+    addLog('Disabling push notifications...')
+    try {
+      if (!user?.id) {
+        addLog('✗ User ID not found', 'error')
+        return
+      }
+
+      await unsubscribeFromPushNotifications(user.id)
+      addLog('✓ Push notifications disabled', 'success')
+      setIsSubscribed(false)
+    } catch (error) {
+      addLog(`✗ Error: ${error.message}`, 'error')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -115,7 +165,32 @@ export default function PushTest() {
     }
   }
 
-  async function checkServiceWorker() {
+  async {/* Enable/Disable Push Button - Prominent */}
+        <div className="mb-6 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-lg">Push Notifications</h3>
+              <p className="text-sm text-gray-600">
+                {isSubscribed 
+                  ? '✓ Enabled - This device will receive push notifications' 
+                  : '✗ Disabled - Enable to receive push notifications on this device'}
+              </p>
+            </div>
+            <button
+              onClick={isSubscribed ? disablePush : enablePush}
+              disabled={loading}
+              className={`px-6 py-3 rounded-lg font-semibold disabled:opacity-50 transition-all ${
+                isSubscribed 
+                  ? 'bg-red-600 hover:bg-red-700 text-white' 
+                  : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
+            >
+              {isSubscribed ? 'Disable Push' : 'Enable Push'}
+            </button>
+          </div>
+        </div>
+
+        function checkServiceWorker() {
     addLog('Checking service worker...')
     try {
       const registration = await navigator.serviceWorker.getRegistration()
@@ -206,14 +281,25 @@ export default function PushTest() {
             onClick={runAllTests}
             disabled={loading}
             className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50 col-span-2"
-          >
-            Run All Tests
-          </button>
+          >📋 Testing Steps:</h3>
+          <ol className="list-decimal ml-5 text-sm space-y-1">
+            <li><strong>Enable Push</strong> - Click the green "Enable Push" button above</li>
+            <li><strong>Run Tests</strong> - Click "Run All Tests" to verify everything works</li>
+            <li><strong>Test Background</strong> - Close this tab, open on another device, and click "Direct Send"</li>
+            <li><strong>Verify</strong> - You should receive notification even with app closed!</li>
+          </ol>
         </div>
 
-        <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm text-green-400 h-96 overflow-y-auto">
-          {logs.length === 0 ? (
-            <div className="text-gray-500">Click a test button to begin...</div>
+        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="font-semibold mb-2">ℹ️ What Each Test Does:</h3>
+          <ul className="list-disc ml-5 text-sm space-y-1">
+            <li><strong>Check Permission:</strong> Verifies browser allows notifications</li>
+            <li><strong>Check SW:</strong> Verifies service worker is registered</li>
+            <li><strong>Check Subscription:</strong> Verifies this device has a push subscription</li>
+            <li><strong>Local Test:</strong> Tests notification display (no backend)</li>
+            <li><strong>Test API:</strong> Tests the /api/push/test endpoint</li>
+            <li><strong>Direct Send:</strong> Sends push to ALL subscribed admin devices</li>
+          </udiv className="text-gray-500">Click a test button to begin...</div>
           ) : (
             logs.map((log, index) => (
               <div

@@ -187,11 +187,11 @@ self.addEventListener('push', function(event) {
   // Notification options - keep it simple for reliability
   const options = {
     body: notificationData.body,
-    icon: '/Empire Car Ac  Logo Design.jpg',
-    badge: '/favicon-32x32.png',
+    icon: '/icons/icon-192x192.png', // Use standard PWA icon
+    badge: '/icons/icon-72x72.png',  // Use standard PWA icon for badge
     vibrate: [300, 100, 200, 100, 300],
     tag: notificationData.tag || 'empire-' + Date.now(),
-    requireInteraction: true,
+    requireInteraction: true, // Keep notification on screen until user interacts
     renotify: true,
     silent: false,
     data: {
@@ -218,7 +218,7 @@ self.addEventListener('push', function(event) {
       // Fallback: try with minimal options
       return self.registration.showNotification('Empire Car A/C', {
         body: 'You have a new notification',
-        icon: '/Empire Car Ac  Logo Design.jpg'
+        icon: '/icons/icon-192x192.png'
       });
     });
 

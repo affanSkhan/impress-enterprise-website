@@ -342,6 +342,18 @@ export default function NotificationSetup() {
           >
             Send Test
           </button>
+
+          <button
+            onClick={() => {
+              addLog('⏳ Sending delayed test in 10 seconds...', 'info');
+              addLog('👉 CLOSE THE APP NOW to test background delivery!', 'warning');
+              setTimeout(testNotification, 10000);
+            }}
+            disabled={!status.subscribed}
+            className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+          >
+            Delayed Test (10s)
+          </button>
           
           <button
             onClick={testFullOrderFlow}

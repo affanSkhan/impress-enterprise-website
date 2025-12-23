@@ -393,9 +393,9 @@ export default function NotificationSetup() {
               <li>Click "Enable Push Notifications" above</li>
               <li>Grant notification permission when prompted</li>
               <li>Open device Settings → Apps → Chrome/Browser</li>
-              <li>Go to Battery → Select "Unrestricted"</li>
+              <li>Go to Battery → Select "Unrestricted" (Critical for background)</li>
               <li>Go to Notifications → Enable all notification categories</li>
-              <li>Test by sending a notification, then closing the browser completely</li>
+              <li className="text-red-600 font-semibold">Note: If you "Force Stop" or swipe-kill the app, notifications may stop until you open it again. This is an Android limitation.</li>
             </ol>
           </div>
         )}

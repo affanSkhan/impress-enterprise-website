@@ -106,11 +106,11 @@ export default async function handler(req, res) {
         timestamp: Date.now()
       })
 
-      // CRITICAL: Options for background delivery - FCM requires specific headers
+      // CRITICAL: Options for background delivery - Standard Web Push headers
       const pushOptions = {
-        TTL: 2419200, // 28 days - maximum allowed by FCM
+        TTL: 2419200, // 28 days - maximum allowed persistence
         urgency: 'high', // HIGH urgency wakes device from doze mode
-        topic: 'empire-order-' + Date.now(), // Unique topic to prevent FCM deduplication
+        topic: 'empire-order-' + Date.now(), // Unique topic to prevent deduplication
       }
 
       try {

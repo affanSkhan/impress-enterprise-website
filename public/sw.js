@@ -1,5 +1,5 @@
 // Service Worker for Empire Spare Parts Admin Dashboard PWA
-const CACHE_NAME = 'empire-admin-v3';
+const CACHE_NAME = 'empire-admin-v4';
 const ADMIN_ROUTES = [
   '/admin',
   '/admin/orders',
@@ -18,7 +18,7 @@ const STATIC_ASSETS = [
 
 // Install event - cache essential admin assets
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v3...');
+  console.log('[Service Worker] Installing v4...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       console.log('[Service Worker] Caching static assets');
@@ -33,7 +33,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating v3...');
+  console.log('[Service Worker] Activating v4...');
   event.waitUntil(
     Promise.all([
       // Clean up old caches
@@ -146,8 +146,10 @@ self.addEventListener('message', (event) => {
 
 // Push notification handler with sound and vibration
 self.addEventListener('push', (event) => {
-  console.log('[Service Worker] Push notification received!', new Date().toISOString());
-  console.log('[Service Worker] Push event:', event);
+  console.log('[Service Worker] ===== PUSH EVENT RECEIVED =====');
+  console.log('[Service Worker] Time:', new Date().toISOString());
+  console.log('[Service Worker] Event:', event);
+  console.log('[Service Worker] Has data:', !!event.data);
   
   let notificationData = {
     title: 'Empire Car A/C',
@@ -157,14 +159,16 @@ self.addEventListener('push', (event) => {
 
   if (event.data) {
     try {
-      notificationData = event.data.json();
-      console.log('[Service Worker] Push data:', notificationData);
+      const rawData = event.data.text();
+      console.log('[Service Worker] Raw push data:', rawData);
+      notificationData = JSON.parse(rawData);
+      console.log('[Service Worker] Parsed push data:', notificationData);
     } catch (error) {
       console.error('[Service Worker] Error parsing push data:', error);
       // Use default notification if parsing fails
     }
   } else {
-    console.log('[Service Worker] No data in push event');
+    console.log('[Service Worker] No data in push event - using defaults');
   }
 
   const options = {
@@ -172,11 +176,11 @@ self.addEventListener('push', (event) => {
     icon: '/Empire Car Ac  Logo Design.jpg',
     badge: '/favicon-32x32.png',
     image: notificationData.image,
-    vibrate: [300, 100, 200, 100, 300], // Vibration pattern
-    tag: notificationData.tag || 'empire-notification',
-    requireInteraction: true, // Keeps notification visible until user interacts
-    renotify: true, // Re-alert even if same tag
-    silent: false, // Play sound
+    vibrate: [300, 100, 200, 100, 300],
+    tag: 'empire-notification',
+    requireInteraction: true,
+    renotify: true,
+    silent: false,
     data: {
       url: notificationData.url || notificationData.link || '/admin',
       notificationId: notificationData.id,
@@ -192,38 +196,47 @@ self.addEventListener('push', (event) => {
         title: 'Dismiss'
       }
     ],
-    // Additional options for better mobile support
     timestamp: notificationData.timestamp || Date.now(),
   };
 
-  console.log('[Service Worker] Showing notification with options:', options);
+  console.log('[Service Worker] Notification options:', JSON.stringify(options, null, 2));
 
-  // Show notification and keep service worker alive
+  // CRITICAL: Must use event.waitUntil to keep service worker alive
   event.waitUntil(
-    self.registration.showNotification(
-      notificationData.title || 'Empire Car A/C', 
-      options
-    ).then(() => {
-      console.log('[Service Worker] Notification displayed successfully at', new Date().toISOString());
-      // Send a message to all clients that notification was received
-      return self.clients.matchAll({ includeUncontrolled: true, type: 'window' })
-        .then(clients => {
-          clients.forEach(client => {
-            client.postMessage({
-              type: 'PUSH_RECEIVED',
-              notification: notificationData
-            });
+    Promise.resolve()
+      .then(() => {
+        console.log('[Service Worker] About to show notification...');
+        return self.registration.showNotification(
+          notificationData.title || 'Empire Car A/C', 
+          options
+        );
+      })
+      .then(() => {
+        console.log('[Service Worker] ✅ Notification displayed successfully at', new Date().toISOString());
+        // Send a message to all clients that notification was received
+        return self.clients.matchAll({ includeUncontrolled: true, type: 'window' });
+      })
+      .then(clients => {
+        console.log('[Service Worker] Found', clients.length, 'clients to notify');
+        clients.forEach(client => {
+          client.postMessage({
+            type: 'PUSH_RECEIVED',
+            notification: notificationData
           });
         });
-    }).catch(error => {
-      console.error('[Service Worker] Error showing notification:', error);
-      // Try to show a basic notification as fallback
-      return self.registration.showNotification('Empire Car A/C', {
-        body: 'You have a new notification',
-        icon: '/Empire Car Ac  Logo Design.jpg'
-      });
-    })
+      })
+      .catch(error => {
+        console.error('[Service Worker] ❌ Error in push handler:', error);
+        console.error('[Service Worker] Error stack:', error.stack);
+        // Try to show a basic notification as fallback
+        return self.registration.showNotification('Empire Car A/C', {
+          body: 'You have a new notification',
+          icon: '/Empire Car Ac  Logo Design.jpg'
+        });
+      })
   );
+
+  console.log('[Service Worker] ===== PUSH EVENT HANDLER COMPLETE =====');
 });
 
 // Notification click handler

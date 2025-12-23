@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1061550488292",
+    "project_id": "empire-admin-6c57e",
+    "storage_bucket": "empire-admin-6c57e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1061550488292:android:9da79ffd307467216a8af1",
+        "android_client_info": {
+          "package_name": "com.empire.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvR6xwFMWhKeqekcUugI6eErmyqP9WrJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

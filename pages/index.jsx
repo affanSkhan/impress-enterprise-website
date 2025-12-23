@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Logo from '@/components/Logo'
@@ -7,8 +9,19 @@ import Logo from '@/components/Logo'
 /**
  * Home Page
  * Main landing page for the public site
+ * Redirects to /admin when opened as native app
  */
 export default function Home() {
+  const router = useRouter()
+
+  useEffect(() => {
+    // Check if running as native app
+    if (typeof window !== 'undefined' && window.Capacitor?.isNativePlatform()) {
+      // Redirect to admin dashboard for native app
+      router.replace('/admin')
+    }
+  }, [router])
+
   return (
     <>
       <Head>

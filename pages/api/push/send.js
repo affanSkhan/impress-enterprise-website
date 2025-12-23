@@ -1,5 +1,6 @@
 import webpush from 'web-push'
 import { createClient } from '@supabase/supabase-js'
+import { sendFCMNotification } from '@/lib/firebaseAdmin'
 
 // Create a Supabase admin client with service role for bypassing RLS
 const supabaseAdmin = createClient(
@@ -91,58 +92,104 @@ export default async function handler(req, res) {
 
     // Send push notification to all subscriptions
     const pushPromises = subscriptions.map(async (sub, index) => {
-      // Unique tag for each notification to prevent deduplication issues
-      const uniqueTag = `empire-${Date.now()}-${index}`;
+      // Check if this is a native FCM token or web push subscription
+      const isFCM = sub.endpoint && sub.endpoint.startsWith('fcm:');
       
-      const payload = JSON.stringify({
-        title: title || 'Empire Car A/C',
-        body: message || 'You have a new notification',
-        message: message,
-        url: url || '/admin',
-        link: url || '/admin',
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-72x72.png',
-        tag: uniqueTag,
-        timestamp: Date.now()
-      })
-
-      // CRITICAL: Options for background delivery - Standard Web Push headers
-      const pushOptions = {
-        TTL: 2419200, // 28 days - maximum allowed persistence
-        urgency: 'high', // HIGH urgency wakes device from doze mode
-        topic: 'empire-order-' + Date.now(), // Unique topic to prevent deduplication
-      }
-
-      try {
-        console.log(`[${index + 1}] Sending push to: ${sub.endpoint?.substring(0, 60)}...`);
-        console.log(`[${index + 1}] TTL: ${pushOptions.TTL}, Urgency: ${pushOptions.urgency}`);
+      if (isFCM) {
+        // Extract FCM token from endpoint (format: fcm:TOKEN)
+        const fcmToken = sub.endpoint.replace('fcm:', '');
         
-        const result = await webpush.sendNotification(sub.subscription, payload, pushOptions)
-        console.log(`[${index + 1}] ✓ Push sent! Status: ${result.statusCode}`);
-        return { success: true, endpoint: sub.endpoint, statusCode: result.statusCode }
-      } catch (error) {
-        console.error(`[${index + 1}] ✗ Push failed:`, {
-          message: error.message,
-          statusCode: error.statusCode,
-          endpoint: sub.endpoint.substring(0, 50),
-          body: error.body
-        });
-        
-        // If subscription is invalid, remove it
-        if (error.statusCode === 410 || error.statusCode === 404) {
-          console.log('Removing invalid subscription (410/404)');
-          await supabaseAdmin
-            .from('push_subscriptions')
-            .delete()
-            .eq('id', sub.id)
+        try {
+          console.log(`[${index + 1}] Sending FCM to token: ${fcmToken.substring(0, 20)}...`);
+          
+          await sendFCMNotification(fcmToken, {
+            title: title || 'Empire Car A/C',
+            body: message || 'You have a new notification',
+            url: url || '/admin',
+            data: {
+              tag: tag || 'empire-notification',
+              timestamp: Date.now().toString()
+            }
+          });
+          
+          console.log(`[${index + 1}] ✓ FCM sent!`);
+          return { success: true, endpoint: sub.endpoint, type: 'fcm' };
+        } catch (error) {
+          console.error(`[${index + 1}] ✗ FCM failed:`, error.message);
+          
+          // If token is invalid, remove it
+          if (error.code === 'messaging/registration-token-not-registered' || 
+              error.code === 'messaging/invalid-registration-token') {
+            console.log('Removing invalid FCM token');
+            await supabaseAdmin
+              .from('push_subscriptions')
+              .delete()
+              .eq('id', sub.id);
+          }
+          
+          return { 
+            success: false, 
+            endpoint: sub.endpoint, 
+            type: 'fcm',
+            error: error.message 
+          };
         }
+      } else {
+        // Web push (VAPID)
+        // Unique tag for each notification to prevent deduplication issues
+        const uniqueTag = `empire-${Date.now()}-${index}`;
         
-        return { 
-          success: false, 
-          endpoint: sub.endpoint, 
-          error: error.message || String(error), 
-          statusCode: error.statusCode,
-          body: error.body ? (typeof error.body === 'string' ? error.body : JSON.stringify(error.body)) : undefined
+        const payload = JSON.stringify({
+          title: title || 'Empire Car A/C',
+          body: message || 'You have a new notification',
+          message: message,
+          url: url || '/admin',
+          link: url || '/admin',
+          icon: '/icons/icon-192x192.png',
+          badge: '/icons/icon-72x72.png',
+          tag: uniqueTag,
+          timestamp: Date.now()
+        })
+
+        // CRITICAL: Options for background delivery - Standard Web Push headers
+        const pushOptions = {
+          TTL: 2419200, // 28 days - maximum allowed persistence
+          urgency: 'high', // HIGH urgency wakes device from doze mode
+          topic: 'empire-order-' + Date.now(), // Unique topic to prevent deduplication
+        }
+
+        try {
+          console.log(`[${index + 1}] Sending web push to: ${sub.endpoint?.substring(0, 60)}...`);
+          console.log(`[${index + 1}] TTL: ${pushOptions.TTL}, Urgency: ${pushOptions.urgency}`);
+          
+          const result = await webpush.sendNotification(sub.subscription, payload, pushOptions)
+          console.log(`[${index + 1}] ✓ Web push sent! Status: ${result.statusCode}`);
+          return { success: true, endpoint: sub.endpoint, type: 'web', statusCode: result.statusCode }
+        } catch (error) {
+          console.error(`[${index + 1}] ✗ Web push failed:`, {
+            message: error.message,
+            statusCode: error.statusCode,
+            endpoint: sub.endpoint.substring(0, 50),
+            body: error.body
+          });
+          
+          // If subscription is invalid, remove it
+          if (error.statusCode === 410 || error.statusCode === 404) {
+            console.log('Removing invalid web push subscription (410/404)');
+            await supabaseAdmin
+              .from('push_subscriptions')
+              .delete()
+              .eq('id', sub.id)
+          }
+          
+          return { 
+            success: false, 
+            endpoint: sub.endpoint, 
+            type: 'web',
+            error: error.message || String(error), 
+            statusCode: error.statusCode,
+            body: error.body ? (typeof error.body === 'string' ? error.body : JSON.stringify(error.body)) : undefined
+          }
         }
       }
     })

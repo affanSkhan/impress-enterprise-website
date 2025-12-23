@@ -10,11 +10,11 @@ $env:CAPACITOR_BUILD = "true"
 npm run build
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "`n✓ Build complete!" -ForegroundColor Green
+    Write-Host "`n[SUCCESS] Build complete!" -ForegroundColor Green
     Write-Host "`nNow sync to Android:" -ForegroundColor Yellow
     Write-Host "  npx cap sync android" -ForegroundColor Cyan
     Write-Host "`nThen build APK in Android Studio" -ForegroundColor Yellow
 } else {
-    Write-Host "`n✗ Build failed!" -ForegroundColor Red
+    Write-Host "`n[FAILED] Build failed!" -ForegroundColor Red
     exit 1
 }

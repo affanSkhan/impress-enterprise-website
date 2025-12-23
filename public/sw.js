@@ -134,6 +134,14 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'CLAIM_CLIENTS') {
     self.clients.claim();
   }
+  
+  // Respond to ping to test if service worker is alive
+  if (event.data && event.data.type === 'PING') {
+    console.log('[Service Worker] Responding to ping');
+    if (event.ports && event.ports[0]) {
+      event.ports[0].postMessage({ pong: true, timestamp: Date.now() });
+    }
+  }
 });
 
 // Push notification handler with sound and vibration

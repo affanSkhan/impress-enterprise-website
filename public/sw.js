@@ -9,7 +9,7 @@ const ADMIN_ROUTES = [
 ];
 
 const STATIC_ASSETS = [
-  '/android-chrome-192x192.png',
+  '/Empire Car Ac  Logo Design.jpg',
   '/android-chrome-512x512.png',
   '/apple-touch-icon.png',
   '/favicon-32x32.png',
@@ -161,7 +161,7 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: notificationData.body || notificationData.message || 'New notification',
-    icon: '/android-chrome-192x192.png',
+    icon: '/Empire Car Ac  Logo Design.jpg',
     badge: '/favicon-32x32.png',
     image: notificationData.image,
     vibrate: [300, 100, 200, 100, 300], // Vibration pattern
@@ -212,7 +212,7 @@ self.addEventListener('push', (event) => {
       // Try to show a basic notification as fallback
       return self.registration.showNotification('Empire Car A/C', {
         body: 'You have a new notification',
-        icon: '/android-chrome-192x192.png'
+        icon: '/Empire Car Ac  Logo Design.jpg'
       });
     })
   );

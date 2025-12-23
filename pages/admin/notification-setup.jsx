@@ -117,10 +117,11 @@ export default function NotificationSetup() {
       addLog('✓ Permission granted', 'success')
       addLog('📱 Subscribing to push notifications...', 'info')
       
-      const result = await subscribeToPushNotifications()
+      const subscription = await subscribeToPushNotifications()
       
-      if (result.success) {
+      if (subscription) {
         addLog('✓ Successfully subscribed to push notifications!', 'success')
+        addLog(`Endpoint: ${subscription.endpoint?.substring(0, 60)}...`, 'info')
         addLog('💡 Keep this browser/PWA open in background to receive notifications', 'info')
         
         // For mobile, show additional instructions
@@ -131,7 +132,7 @@ export default function NotificationSetup() {
         
         await checkStatus()
       } else {
-        addLog(`❌ Subscription failed: ${result.error}`, 'error')
+        addLog('❌ Subscription failed - check console for details', 'error')
       }
     } catch (error) {
       addLog(`❌ Error: ${error.message}`, 'error')

@@ -54,7 +54,29 @@ export async function subscribeToPushNotifications(userId) {
   try {
     console.log('Starting push notification subscription...');
     console.log('VAPID key available:', !!VAPID_PUBLIC_KEY);
-    console.log('User ID:', userId);
+    console.log('User ID provided:', userId);
+
+    // If no userId provided, try to get it from Supabase session
+    let actualUserId = userId;
+    if (!actualUserId) {
+      try {
+        const { createClient } = await import('@supabase/supabase-js');
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        );
+        const { data: { user } } = await supabase.auth.getUser();
+        actualUserId = user?.id;
+        console.log('Got user ID from session:', actualUserId);
+      } catch (e) {
+        console.warn('Could not get user from session:', e);
+      }
+    }
+
+    if (!actualUserId) {
+      console.error('No user ID available - user must be logged in');
+      throw new Error('You must be logged in to enable push notifications');
+    }
 
     // Check if service worker is supported
     if (!('serviceWorker' in navigator)) {
@@ -133,7 +155,7 @@ export async function subscribeToPushNotifications(userId) {
     console.log('Push subscription created:', subscription.endpoint);
 
     // Save subscription to backend
-    console.log('Saving subscription to backend...');
+    console.log('Saving subscription to backend with userId:', actualUserId);
     const response = await fetch('/api/push/subscribe', {
       method: 'POST',
       headers: {
@@ -141,7 +163,7 @@ export async function subscribeToPushNotifications(userId) {
       },
       body: JSON.stringify({
         subscription,
-        userId
+        userId: actualUserId
       })
     });
 

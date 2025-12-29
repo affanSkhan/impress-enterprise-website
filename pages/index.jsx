@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Logo from '@/components/Logo'
+import ProductShowcase from '@/components/ProductShowcase'
 
 /**
  * Home Page
@@ -74,6 +75,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Product Showcase Section - NEW */}
+        <ProductShowcase />
 
         {/* Features Section */}
         <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-slate-50 to-blue-50">

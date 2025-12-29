@@ -48,20 +48,11 @@ export default function ProductShowcase() {
 
   const slideInterval = 5000 // 5 seconds
 
-  // Auto-slide functionality
+  // Start auto-sliding on component mount
   useEffect(() => {
-    // Clear any existing timer
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
-    }
-
-    // Start auto-sliding if not paused and not hovering
-    if (!isPaused && !isHovering) {
-      timerRef.current = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % products.length)
-      }, slideInterval)
-    }
+    timerRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % products.length)
+    }, slideInterval)
 
     return () => {
       if (timerRef.current) {
@@ -69,24 +60,36 @@ export default function ProductShowcase() {
         timerRef.current = null
       }
     }
-  }, [isPaused, isHovering, products.length, slideInterval])
+  }, []) // Only run on mount
+
+  // Handle pause/resume based on state changes
+  useEffect(() => {
+    if (isPaused || isHovering) {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+        timerRef.current = null
+      }
+    } else if (!timerRef.current) {
+      // Resume auto-sliding
+      timerRef.current = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % products.length)
+      }, slideInterval)
+    }
+  }, [isPaused, isHovering])
 
   const goToSlide = (index) => {
     setCurrentSlide(index)
-    setIsPaused(true)
-    setTimeout(() => setIsPaused(false), 3000) // Resume after 3 seconds
+    // Removed temporary pause - let auto-sliding continue
   }
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % products.length)
-    setIsPaused(true)
-    setTimeout(() => setIsPaused(false), 3000)
+    // Removed temporary pause - let auto-sliding continue
   }
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + products.length) % products.length)
-    setIsPaused(true)
-    setTimeout(() => setIsPaused(false), 3000)
+    // Removed temporary pause - let auto-sliding continue
   }
 
   return (

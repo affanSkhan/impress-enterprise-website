@@ -79,12 +79,40 @@ export default function Home() {
         {/* Product Showcase Section - NEW */}
         <ProductShowcase />
 
+        {/* Services Banner */}
+        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-r from-blue-500 via-slate-500 to-blue-600 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black opacity-20"></div>
+          <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="flex items-center justify-center mb-3 sm:mb-4">
+                <svg className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
+                </svg>
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 text-white drop-shadow-lg">Professional Car A/C Services</h2>
+              <p className="text-sm sm:text-base md:text-lg text-white mb-3 sm:mb-4">
+                <span className="font-semibold">Installation • Repair • Maintenance</span>
+              </p>
+              <p className="text-xs sm:text-sm md:text-base text-white/90 mb-4 sm:mb-6">
+                Visit our shop in Amravati for expert car air conditioning services. Our experienced technicians provide professional installation, repair, and maintenance services.
+              </p>
+              <div className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-lg shadow-xl">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="font-medium text-gray-900 text-xs sm:text-sm">Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Features Section */}
         <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-slate-50 to-blue-50">
           <div className="container mx-auto px-4">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent">Why Choose Us?</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              <div className="text-center bg-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="text-center bg-gradient-to-br from-blue-50 via-blue-100 to-slate-100 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-blue-200/50">
                 <div className="bg-gradient-to-br from-blue-400 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -96,7 +124,7 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="text-center bg-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="text-center bg-gradient-to-br from-blue-50 via-blue-100 to-slate-100 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-blue-200/50">
                 <div className="bg-gradient-to-br from-cyan-400 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -108,7 +136,7 @@ export default function Home() {
                 </p>
               </div>
               
-              <div className="text-center bg-white rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+              <div className="text-center bg-gradient-to-br from-blue-50 via-blue-100 to-slate-100 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-blue-200/50">
                 <div className="bg-gradient-to-br from-cyan-400 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -123,42 +151,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Services Banner */}
-        <section className="py-12 sm:py-16 bg-gradient-to-r from-blue-500 via-slate-500 to-blue-600 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black opacity-20"></div>
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="flex items-center justify-center mb-4">
-                <svg className="w-12 h-12 sm:w-16 sm:h-16 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
-                </svg>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-white drop-shadow-lg">Professional Car A/C Services</h2>
-              <p className="text-base sm:text-lg text-white mb-4">
-                <span className="font-semibold">Installation • Repair • Maintenance</span>
-              </p>
-              <p className="text-sm sm:text-base text-white/90 mb-6">
-                Visit our shop in Amravati for expert car air conditioning services. Our experienced technicians provide professional installation, repair, and maintenance services.
-              </p>
-              <div className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm px-6 py-3 rounded-lg shadow-xl">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <span className="font-medium text-gray-900">Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* CTA Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-blue-100 via-slate-50 to-cyan-100">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-slate-600 to-blue-700 bg-clip-text text-transparent">Shop Car A/C Parts Online</h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-6 sm:mb-8 max-w-2xl mx-auto">
+        <section className="py-12 sm:py-16 lg:py-20 xl:py-24 bg-gradient-to-br from-blue-50 via-slate-50 to-blue-100">
+          <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 text-center">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-blue-600 via-slate-600 to-blue-700 bg-clip-text text-transparent">Shop Car A/C Parts Online</h2>
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
               Browse our extensive catalogue of genuine car A/C parts and accessories
             </p>
-            <Link href="/products" className="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 via-slate-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:via-slate-700 hover:to-blue-800 transition-all transform hover:scale-105 font-semibold text-lg shadow-xl">
+            <Link href="/products" className="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 via-slate-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:via-slate-700 hover:to-blue-800 transition-all transform hover:scale-105 font-semibold text-base sm:text-lg shadow-xl">
               View All Products
             </Link>
           </div>

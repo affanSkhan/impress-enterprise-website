@@ -142,8 +142,8 @@ export default function AdminLayout({ children }) {
 
       {/* Sidebar */}
       <aside className={`fixed top-16 left-0 bottom-0 w-64 bg-gradient-to-b from-white to-blue-50 shadow-2xl transition-transform duration-300 z-40 overflow-y-auto border-r-2 border-blue-100 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <nav className="p-4">
-          <ul className="space-y-2">
+        <nav className="p-4 min-h-full flex flex-col">
+          <ul className="space-y-2 flex-1">
             <li>
               <Link
                 href="/admin"
@@ -236,6 +236,12 @@ export default function AdminLayout({ children }) {
               </Link>
             </li>
           </ul>
+
+          <div className="mt-8 pt-4 border-t border-blue-200 text-center">
+             <p className="text-lg text-gray-500">
+              Designed and developed by <a href="https://affan.tech" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-600 hover:to-pink-600 transition-all font-semibold">Affan.Tech</a>
+            </p>
+          </div>
         </nav>
       </aside>
 

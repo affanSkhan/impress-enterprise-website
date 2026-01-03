@@ -68,6 +68,9 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-gray-700/50 mt-8 pt-8 text-center">
           <p className="text-gray-400">&copy; {currentYear} Empire Car A/C. All rights reserved.</p>
+          <p className="text-gray-500 text-lg mt-2">
+            Designed and developed by <a href="https://affan.tech" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-600 hover:to-pink-600 transition-all font-semibold">Affan.Tech</a>
+          </p>
         </div>
       </div>
     </footer>

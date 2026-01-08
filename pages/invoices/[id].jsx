@@ -165,8 +165,8 @@ export default function PublicInvoicePage() {
               {/* Logo */}
               <div className="relative w-20 h-20 bg-white rounded-lg p-2 flex-shrink-0">
                 <Image
-                  src="/Empire Car Ac  Logo Design.jpg"
-                  alt="Empire Car A/C"
+                  src="/impress_enterprise_logo.png"
+                  alt="Impress Enterprise"
                   fill
                   className="object-contain"
                 />

@@ -20,6 +20,8 @@ export default function AdminDashboard() {
     pendingOrders: 0,
     totalCustomers: 0,
     monthlyRevenue: 0,
+    totalBookings: 0,
+    pendingBookings: 0,
   })
   const [recentOrders, setRecentOrders] = useState([])
 
@@ -43,7 +45,9 @@ export default function AdminDashboard() {
       pendingOrdersRes,
       customersRes,
       revenueRes,
-      recentOrdersRes
+      recentOrdersRes,
+      bookingsRes,
+      pendingBookingsRes
     ] = await Promise.all([
       supabase.from('products').select('id', { count: 'exact', head: true }),
       supabase.from('categories').select('id', { count: 'exact', head: true }),
@@ -53,7 +57,9 @@ export default function AdminDashboard() {
       supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabase.from('customers').select('id', { count: 'exact', head: true }),
       supabase.from('invoices').select('total').gte('created_at', startOfMonth),
-      supabase.from('orders').select('*, customer:customers(name)').order('created_at', { ascending: false }).limit(5)
+      supabase.from('orders').select('*, customer:customers(name)').order('created_at', { ascending: false }).limit(5),
+      supabase.from('service_bookings').select('id', { count: 'exact', head: true }),
+      supabase.from('service_bookings').select('id', { count: 'exact', head: true }).eq('status', 'pending')
     ])
 
     const monthlyRevenue = revenueRes.data?.reduce((sum, inv) => sum + (inv.total || 0), 0) || 0
@@ -67,6 +73,8 @@ export default function AdminDashboard() {
       pendingOrders: pendingOrdersRes.count || 0,
       totalCustomers: customersRes.count || 0,
       monthlyRevenue: monthlyRevenue,
+      totalBookings: bookingsRes.count || 0,
+      pendingBookings: pendingBookingsRes.count || 0,
     })
     
     setRecentOrders(recentOrdersRes.data || [])
@@ -152,6 +160,34 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+
+          <Link href="/admin/bookings" className="card bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-600 text-white shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/80 text-xs sm:text-sm mb-1">Service Bookings</p>
+                <p className="text-2xl sm:text-3xl font-bold">{stats.totalBookings}</p>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm p-2 sm:p-3 rounded-lg">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/admin/bookings?status=pending" className="card bg-gradient-to-br from-yellow-500 via-orange-500 to-red-600 text-white shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-white/80 text-xs sm:text-sm mb-1">Pending Bookings</p>
+                <p className="text-2xl sm:text-3xl font-bold">{stats.pendingBookings}</p>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm p-2 sm:p-3 rounded-lg">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Stats Cards - Row 2 */}
@@ -262,6 +298,18 @@ export default function AdminDashboard() {
               <div className="min-w-0">
                 <p className="font-semibold text-sm sm:text-base">Categories</p>
                 <p className="text-xs sm:text-sm text-gray-600 truncate">Manage categories</p>
+              </div>
+            </Link>
+
+            <Link href="/admin/bookings" className="flex items-center p-3 sm:p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl hover:from-indigo-100 hover:to-purple-100 transition-all border border-indigo-200 hover:shadow-lg transform hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0 shadow-md">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <p className="font-semibold text-sm sm:text-base">View Bookings</p>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">Manage service bookings</p>
               </div>
             </Link>
           </div>

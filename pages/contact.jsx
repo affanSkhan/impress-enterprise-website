@@ -2,27 +2,28 @@ import Head from 'next/head'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Logo from '@/components/Logo'
+import siteConfig from '@/site.config'
 
 /**
  * Contact Page - Phase 2 Enhanced
  * Displays contact information with phone, WhatsApp, and Google Maps
  */
 export default function ContactPage() {
-  // ⚠️ UPDATE THESE WITH YOUR ACTUAL BUSINESS INFORMATION
+  // ⚠️ TODO: UPDATE THESE WITH YOUR ACTUAL BUSINESS INFORMATION
   const businessInfo = {
-    name: 'Empire Car A/C',
-    phoneNumber: '+917741077666',           // Format: +[country code][number]
-    whatsappNumber: '917741077666',         // Format: [country code][number] (no + or spaces)
-    email: 'Empirecarac@gmail.com',
-    address: 'Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati',
-    city: 'Amravati',
-    state: 'Maharashtra',
-    zipCode: '444601',
+    name: siteConfig.brandName,
+    phoneNumber: siteConfig.contact.phone,           // Format: +[country code][number]
+    whatsappNumber: siteConfig.contact.whatsapp,         // Format: [country code][number] (no + or spaces)
+    email: siteConfig.contact.email,
+    address: siteConfig.location.address || 'TODO: Add full street address',
+    city: siteConfig.location.city,
+    state: siteConfig.location.state,
+    zipCode: siteConfig.location.zipCode || 'TODO',
     country: 'India',
-    // Google Maps location link
-    locationUrl: 'https://maps.app.goo.gl/WgWs6qW7dFqAkmPj9?g_st=aw',
-    // Google Maps embed URL
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3722.5!2d77.7544!3d21.0925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd6a4a41388dbc7%3A0x3c28f1b3c39ea9f1!2sShop%20no%2019%2C%20Empire%20Car%20Ac%20Repairing%2C%20usmaniya%20masjid%20complex%2C%20bus%20stand%20road%2C%20Maltekdi%2C%20Amravati%2C%20Maharashtra%20444601!5e0!3m2!1sen!2sin!4v1733267890123!5m2!1sen!2sin'
+    // TODO: Update Google Maps location link with actual Impress Enterprise location
+    locationUrl: 'https://maps.app.goo.gl/TODO',
+    // TODO: Update Google Maps embed URL with actual Impress Enterprise location
+    mapEmbedUrl: 'TODO: Get iframe embed code from Google Maps'
   }
 
   const businessHours = {
@@ -36,22 +37,22 @@ export default function ContactPage() {
   return (
     <>
       <Head>
-        <title>Contact Us - Get in Touch | {businessInfo.name}</title>
-        <meta name="description" content={`Contact ${businessInfo.name} for spare parts pricing and availability. Call, WhatsApp, or visit us at ${fullAddress}`} />
-        <meta name="keywords" content="contact, spare parts, automotive, phone, whatsapp, location" />
+        <title>Contact Us - Get in Touch | {siteConfig.brandName}</title>
+        <meta name="description" content={`Contact ${siteConfig.brandName} for solar panel installation, electronics sales & service. AC, refrigerators, washing machines, solar systems. Call, WhatsApp, or visit us in ${siteConfig.location.city}`} />
+        <meta name="keywords" content="contact, solar installation, electronics service, AC repair, refrigerator service, phone, whatsapp, location, daryapur, amravati" />
         
         {/* Open Graph */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={`Contact Us - ${businessInfo.name}`} />
-        <meta property="og:description" content="Get in touch with us for pricing and availability" />
-        <meta property="og:url" content="https://yoursite.com/contact" />
+        <meta property="og:title" content={`Contact Us - ${siteConfig.brandName}`} />
+        <meta property="og:description" content={`Get in touch for ${siteConfig.tagline}`} />
+        <meta property="og:url" content={`${siteConfig.domain}/contact`} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content={`Contact Us - ${businessInfo.name}`} />
-        <meta name="twitter:description" content="Get in touch with us for pricing and availability" />
+        <meta name="twitter:title" content={`Contact Us - ${siteConfig.brandName}`} />
+        <meta name="twitter:description" content={`Get in touch for ${siteConfig.tagline}`} />
         
-        <link rel="canonical" href="https://yoursite.com/contact" />
+        <link rel="canonical" href={`${siteConfig.domain}/contact`} />
       </Head>
 
       <Navbar />
@@ -64,11 +65,11 @@ export default function ContactPage() {
               <div className="flex flex-col items-center mb-6">
                 <Logo size="normal" />
               </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-slate-600 to-blue-700 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 via-cyan-600 to-amber-600 bg-clip-text text-transparent">
                 Contact Us
               </h1>
               <p className="text-lg sm:text-xl text-gray-700 max-w-2xl mx-auto">
-                Need car A/C parts or professional installation services? Visit our Amravati shop or get in touch for pricing and availability.
+                Need cooling systems, solar solutions, or furniture? Visit our {siteConfig.location.city} location or get in touch for pricing and availability.
               </p>
             </div>
 

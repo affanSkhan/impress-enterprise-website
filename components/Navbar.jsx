@@ -118,7 +118,7 @@ export default function Navbar() {
               Home
             </Link>
             <Link href="/products" className="text-gray-700 hover:text-slate-600 transition-colors font-medium">
-              Products
+              Services
             </Link>
             <Link href="/contact" className="text-gray-700 hover:text-blue-700 transition-colors font-medium">
               Contact
@@ -178,7 +178,7 @@ export default function Navbar() {
                 Home
               </Link>
               <Link href="/products" className="text-gray-700 hover:text-blue-600 transition-colors font-medium px-4 py-2 hover:bg-blue-50 rounded-lg">
-                Products
+                Services
               </Link>
               <Link href="/contact" className="text-gray-700 hover:text-cyan-600 transition-colors font-medium px-4 py-2 hover:bg-cyan-50 rounded-lg">
                 Contact

@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 
-const inputImage = path.join(__dirname, '../public/Empire Car Ac  Logo Design.jpg');
+const inputImage = path.join(__dirname, '../public/impress_enterprise_logo.png');
 const iconsDir = path.join(__dirname, '../public/icons');
 
 async function generatePWAIcons() {

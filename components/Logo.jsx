@@ -1,7 +1,8 @@
 import Image from 'next/image'
+import siteConfig from '@/site.config'
 
 /**
- * Logo Component for Empire Car A/C
+ * Logo Component for Impress Enterprise
  * Displays the business logo with circular image and tagline
  */
 export default function Logo({ className = "", size = "normal", showText = true }) {
@@ -31,10 +32,10 @@ export default function Logo({ className = "", size = "normal", showText = true 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {/* Circular Logo Image */}
-      <div className={`${currentSize.logoClass} rounded-full overflow-hidden bg-gray-900 flex-shrink-0 shadow-lg ring-2 ring-blue-400 ring-offset-2`}>
+      <div className={`${currentSize.logoClass} rounded-full overflow-hidden bg-gradient-to-br from-blue-500 via-cyan-500 to-amber-500 flex-shrink-0 shadow-lg ring-2 ring-blue-400 ring-offset-2`}>
         <Image
-          src="/Empire Car Ac  Logo Design.jpg"
-          alt="Empire Car A/C Logo"
+          src={siteConfig.logo.path}
+          alt={siteConfig.logo.alt}
           width={currentSize.logo}
           height={currentSize.logo}
           className="w-full h-full object-cover"
@@ -46,11 +47,11 @@ export default function Logo({ className = "", size = "normal", showText = true 
       {showText && (
         <div className="flex flex-col">
           <div className={`${currentSize.text} font-bold leading-tight`}>
-            <span className="text-gray-900">EMPIRE CAR </span>
-            <span className="bg-gradient-to-r from-blue-500 to-slate-500 bg-clip-text text-transparent">A/C</span>
+            <span className="text-gray-900">{siteConfig.brandName.split(' ')[0]} </span>
+            <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-amber-500 bg-clip-text text-transparent">{siteConfig.brandName.split(' ')[1]}</span>
           </div>
-          <div className={`${currentSize.tagline} bg-gradient-to-r from-blue-500 to-slate-500 bg-clip-text text-transparent font-medium italic leading-tight mt-0.5`}>
-            Our Perfection Your Satisfaction
+          <div className={`${currentSize.tagline} bg-gradient-to-r from-blue-600 via-cyan-500 to-amber-500 bg-clip-text text-transparent font-medium leading-tight mt-0.5`}>
+            {siteConfig.tagline}
           </div>
         </div>
       )}

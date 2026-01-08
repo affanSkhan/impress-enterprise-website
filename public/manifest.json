@@ -1,12 +1,12 @@
 {
-  "name": "Empire Spare Parts - Admin Dashboard",
-  "short_name": "Empire Admin",
-  "description": "Admin dashboard for Empire Spare Parts order and inventory management",
+  "name": "Impress Enterprise - Admin Dashboard",
+  "short_name": "Impress Admin",
+  "description": "Admin dashboard for Impress Enterprise order and service management",
   "start_url": "/admin",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#0284c7",
   "orientation": "portrait",
   "gcm_sender_id": "103953800507",
   "icons": [

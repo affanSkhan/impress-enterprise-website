@@ -1,7 +1,7 @@
-// Service Worker for Empire Spare Parts Admin Dashboard PWA
-// VERSION 6 - Robust background push notification fix
-const CACHE_NAME = 'empire-admin-v6';
-const SW_VERSION = '6.0.0';
+// Service Worker for Impress Enterprise Admin Dashboard PWA
+// VERSION 7 - Updated with Impress Enterprise branding
+const CACHE_NAME = 'impress-admin-v7';
+const SW_VERSION = '7.0.0';
 
 // Log immediately when service worker script runs
 console.log('[Service Worker] Script loaded, version:', SW_VERSION);
@@ -16,7 +16,7 @@ const ADMIN_ROUTES = [
 ];
 
 const STATIC_ASSETS = [
-  '/Empire Car Ac  Logo Design.jpg',
+  '/impress_enterprise_logo.png',
   '/android-chrome-512x512.png',
   '/apple-touch-icon.png',
   '/favicon-32x32.png',

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Logo from './Logo'
+import siteConfig from '@/site.config'
 
 /**
  * Footer Component
@@ -19,7 +20,7 @@ export default function Footer() {
               <Logo size="small" className="[&_.text-gray-900]:text-white [&_.bg-gradient-to-r]:from-slate-400 [&_.bg-gradient-to-r]:to-blue-400" />
             </div>
             <p className="text-gray-300 mb-3">
-              Amravati's trusted source for car air conditioning spare parts and accessories.
+              {siteConfig.description}
             </p>
           </div>
 
@@ -53,13 +54,13 @@ export default function Footer() {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                +91 77410 77666
+                {siteConfig.contact.phoneFormatted}
               </li>
               <li className="flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                Empirecarac@gmail.com
+                {siteConfig.contact.email}
               </li>
             </ul>
           </div>
@@ -67,7 +68,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-700/50 mt-8 pt-8 text-center">
-          <p className="text-gray-400">&copy; {currentYear} Empire Car A/C. All rights reserved.</p>
+          <p className="text-gray-400">&copy; {currentYear} {siteConfig.brandName}. All rights reserved.</p>
           <p className="text-gray-500 text-lg mt-2">
             Designed and developed by <a href="https://affan.tech" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-600 hover:to-pink-600 transition-all font-semibold">Affan.Tech</a>
           </p>

@@ -7,6 +7,7 @@ import Footer from '@/components/Footer'
 import ProductCard from '@/components/ProductCard'
 import CategoryFilter from '@/components/CategoryFilter'
 import { supabase } from '@/lib/supabaseClient'
+import siteConfig from '@/site.config'
 
 /**
  * Products Catalogue Page
@@ -127,22 +128,22 @@ export default function ProductsPage() {
   return (
     <>
       <Head>
-        <title>Car A/C Parts Catalogue - Empire Car A/C | Amravati</title>
-        <meta name="description" content="Browse our extensive catalogue of car air conditioning spare parts and accessories. Find A/C compressors, condensers, and more. Contact us for pricing and availability." />
-        <meta name="keywords" content="car ac parts, ac compressor, ac condenser, car air conditioning, ac spare parts, amravati" />
+        <title>Our Services & Products - {siteConfig.brandName} | {siteConfig.location.city}</title>
+        <meta name="description" content={`Browse our services: ${siteConfig.services.solar.name} and ${siteConfig.services.electronics.name}. Solar panels, AC service, refrigerator repair, washing machines. Contact us for pricing.`} />
+        <meta name="keywords" content="solar panel installation, electronics service, AC repair, refrigerator service, washing machine repair, solar inverter, daryapur, amravati" />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Car A/C Parts Catalogue - Empire Car A/C" />
-        <meta property="og:description" content="Browse our extensive catalogue of car A/C spare parts and accessories" />
-        <meta property="og:url" content="https://yoursite.com/products" />
+        <meta property="og:title" content={`Our Services & Products - ${siteConfig.brandName}`} />
+        <meta property="og:description" content={siteConfig.description} />
+        <meta property="og:url" content={`${siteConfig.domain}/products`} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Car A/C Parts Catalogue - Empire Car A/C" />
-        <meta name="twitter:description" content="Browse car A/C spare parts and accessories in Amravati" />
+        <meta name="twitter:title" content={`Our Services & Products - ${siteConfig.brandName}`} />
+        <meta name="twitter:description" content={siteConfig.description} />
         
-        <link rel="canonical" href="https://yoursite.com/products" />
+        <link rel="canonical" href={`${siteConfig.domain}/products`} />
       </Head>
 
       <Navbar />
@@ -151,11 +152,11 @@ export default function ProductsPage() {
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent">
-              Product Catalogue
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Services & Products
             </h1>
             <p className="text-base sm:text-lg text-gray-700">
-              Browse our selection of {totalProducts} quality spare parts
+              Browse our selection of {totalProducts} services and products
             </p>
           </div>
 

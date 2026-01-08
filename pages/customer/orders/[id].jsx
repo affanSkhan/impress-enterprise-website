@@ -4,21 +4,13 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
 import CustomerLayout from '@/components/CustomerLayout'
-import CustomerToast from '@/components/CustomerToast'
 import useSimpleAuth from '@/hooks/useSimpleAuth'
 import { supabase } from '@/lib/supabaseClient'
-import { 
-  cancelOrder, 
-  canCustomerCancelOrder, 
-  getStatusColor, 
-  getStatusDisplayName 
-} from '@/utils/enhancedOrderHelpers'
-import CancellationModal from '@/components/CancellationModal'
+import siteConfig from '@/site.config'
 
 /**
- * Customer Order Detail Page
- * Shows detailed information about a specific order
- * NOTE: Prices are NOT shown to customers per Phase 6 requirements
+ * Customer Order Detail Page - Enhanced
+ * Shows detailed order information with reorder and invoice download
  */
 export default function OrderDetail() {
   const router = useRouter()
@@ -29,9 +21,7 @@ export default function OrderDetail() {
   const [orderItems, setOrderItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
-  const [toast, setToast] = useState(null)
-  const [statusUpdating, setStatusUpdating] = useState(false)
-  const [showCancellationModal, setShowCancellationModal] = useState(false)
+  const [reordering, setReordering] = useState(false)
   const [cancelling, setCancelling] = useState(false)
 
   const fetchOrderDetails = useCallback(async () => {
@@ -84,6 +74,118 @@ export default function OrderDetail() {
   useEffect(() => {
     fetchOrderDetails()
   }, [fetchOrderDetails])
+
+  async function handleReorder() {
+    if (!confirm('Add all items from this order to your cart?')) return
+    
+    setReordering(true)
+    try {
+      // Add each item to cart
+      const cartPromises = orderItems.map(item => 
+        supabase
+          .from('cart_items')
+          .upsert({
+            customer_id: customer.id,
+            product_id: item.product_id,
+            quantity: item.quantity
+          }, {
+            onConflict: 'customer_id,product_id',
+            ignoreDuplicates: false
+          })
+      )
+      
+      await Promise.all(cartPromises)
+      
+      // Trigger cart update
+      window.dispatchEvent(new Event('cart-updated'))
+      
+      alert(`${orderItems.length} item(s) added to cart!`)
+      router.push('/customer/cart')
+    } catch (error) {
+      console.error('Reorder error:', error)
+      alert('Failed to reorder. Please try again.')
+    } finally {
+      setReordering(false)
+    }
+  }
+
+  async function handleCancelOrder() {
+    if (!confirm('Are you sure you want to cancel this order?')) return
+    
+    setCancelling(true)
+    try {
+      const { error } = await supabase
+        .from('orders')
+        .update({ status: 'cancelled' })
+        .eq('id', id)
+      
+      if (error) throw error
+      
+      alert('Order cancelled successfully')
+      fetchOrderDetails()
+    } catch (error) {
+      console.error('Cancel error:', error)
+      alert('Failed to cancel order')
+    } finally {
+      setCancelling(false)
+    }
+  }
+
+  const getStatusBadge = (status) => {
+    const badges = {
+      pending: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      confirmed: 'bg-blue-100 text-blue-800 border-blue-300',
+      processing: 'bg-purple-100 text-purple-800 border-purple-300',
+      shipped: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+      delivered: 'bg-green-100 text-green-800 border-green-300',
+      cancelled: 'bg-red-100 text-red-800 border-red-300',
+    }
+    return badges[status] || 'bg-gray-100 text-gray-800 border-gray-300'
+  }
+
+  const getStatusIcon = (status) => {
+    const icons = {
+      pending: '⏳',
+      confirmed: '✅',
+      processing: '⚙️',
+      shipped: '🚚',
+      delivered: '📦',
+      cancelled: '❌',
+    }
+    return icons[status] || '📋'
+  }
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  const getProductImage = (item) => {
+    const product = item.product
+    if (!product?.product_images || product.product_images.length === 0) {
+      return '/placeholder-product.png'
+    }
+    const primaryImage = product.product_images.find(img => img.is_primary)
+    return primaryImage?.image_url || product.product_images[0]?.image_url
+  }
+
+  const statusTimeline = [
+    { id: 'pending', label: 'Order Placed', icon: '📋' },
+    { id: 'confirmed', label: 'Confirmed', icon: '✅' },
+    { id: 'processing', label: 'Processing', icon: '⚙️' },
+    { id: 'shipped', label: 'Shipped', icon: '🚚' },
+    { id: 'delivered', label: 'Delivered', icon: '📦' },
+  ]
+
+  const getCurrentStatusIndex = (status) => {
+    if (status === 'cancelled') return -1
+    return statusTimeline.findIndex(s => s.id === status)
+  }
 
   // Real-time order status updates
   useEffect(() => {
@@ -262,16 +364,20 @@ export default function OrderDetail() {
     return (
       <CustomerLayout>
         <Head>
-          <title>Order Not Found - Empire Car A/C</title>
+          <title>Order Not Found - {siteConfig.brandName}</title>
+          <meta name="robots" content="noindex, nofollow" />
+          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         </Head>
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-2xl mx-auto text-center py-12">
-            <svg className="w-24 h-24 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 22s-8-4.5-8-11V5l8-3 8 3v6c0 6.5-8 11-8 11z" />
-            </svg>
+        <div className="max-w-4xl mx-auto">
+          <div className="card text-center py-12">
+            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Order Not Found</h1>
             <p className="text-gray-600 mb-6">The order you're looking for doesn't exist or you don't have access to it.</p>
-            <Link href="/customer/orders" className="btn-primary inline-block">
+            <Link href="/customer/orders" className="btn-primary inline-block px-6 py-3">
               View All Orders
             </Link>
           </div>

@@ -99,7 +99,7 @@ export default function PublicInvoicePage() {
 
       // Add Logo centered with business name
       const logoImg = new Image();
-      logoImg.src = '/Empire Car Ac  Logo Design.jpg';
+      logoImg.src = '/impress_enterprise_logo.png';
       const logoSize = 15;
       const logoX = (pageWidth / 2) - 40; // Center the logo+text combo
       doc.addImage(logoImg, 'JPEG', logoX, yPos - 3, logoSize, logoSize);
@@ -341,7 +341,7 @@ export default function PublicInvoicePage() {
               {/* Business Header */}
               <div className="mb-6 sm:mb-8 border-b pb-4 sm:pb-6">
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                  <img src="/Empire Car Ac  Logo Design.jpg" alt="Empire Car A/C Logo" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover" />
+                  <img src="/impress_enterprise_logo.png" alt="Impress Enterprise Logo" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover" />
                   <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 text-center">{businessInfo.name}</h1>
                 </div>
                 <div className="text-center space-y-1">

@@ -1,20 +1,23 @@
 import { useState, useEffect, useCallback } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import CustomerLayout from '@/components/CustomerLayout'
 import useSimpleAuth from '@/hooks/useSimpleAuth'
 import { supabase } from '@/lib/supabaseClient'
-import { getStatusColor, getStatusDisplayName } from '@/utils/enhancedOrderHelpers'
+import siteConfig from '@/site.config'
 
 /**
- * Customer Orders List Page
- * Shows all orders placed by the customer
+ * Customer Orders List Page - Enhanced
+ * Shows all orders with reorder functionality and mobile-optimized design
  */
 export default function CustomerOrders() {
+  const router = useRouter()
   const { customer } = useSimpleAuth()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all') // all, pending, reviewed, approved, invoiced
+  const [reordering, setReordering] = useState(null)
+  const [filter, setFilter] = useState('all') // all, pending, confirmed, processing, shipped, delivered, cancelled
 
   const fetchOrders = useCallback(async () => {
     if (!customer) return
@@ -26,7 +29,14 @@ export default function CustomerOrders() {
         .from('orders')
         .select(`
           *,
-          order_items(count)
+          order_items(
+            id,
+            product_id,
+            product_name,
+            quantity,
+            admin_price,
+            admin_total
+          )
         `)
         .eq('customer_id', customer.id)
         .order('created_at', { ascending: false })
@@ -51,18 +61,74 @@ export default function CustomerOrders() {
     fetchOrders()
   }, [fetchOrders])
 
-  function getStatusBadge(status) {
-    const color = getStatusColor(status)
+  async function handleReorder(orderId) {
+    if (!confirm('Add all items from this order to your cart?')) return
     
-    return (
-      <span className={`px-3 py-1 rounded-full text-xs font-semibold border bg-${color}-100 text-${color}-800 border-${color}-200`}>
-        {getStatusDisplayName(status)}
-      </span>
-    )
+    setReordering(orderId)
+    try {
+      // Get order items
+      const { data: items, error } = await supabase
+        .from('order_items')
+        .select('product_id, quantity')
+        .eq('order_id', orderId)
+      
+      if (error) throw error
+      
+      // Add each item to cart
+      const cartPromises = items.map(item => 
+        supabase
+          .from('cart_items')
+          .upsert({
+            customer_id: customer.id,
+            product_id: item.product_id,
+            quantity: item.quantity
+          }, {
+            onConflict: 'customer_id,product_id',
+            ignoreDuplicates: false
+          })
+      )
+      
+      await Promise.all(cartPromises)
+      
+      // Trigger cart update
+      window.dispatchEvent(new Event('cart-updated'))
+      
+      alert(`${items.length} item(s) added to cart!`)
+      router.push('/customer/cart')
+    } catch (error) {
+      console.error('Reorder error:', error)
+      alert('Failed to reorder. Please try again.')
+    } finally {
+      setReordering(null)
+    }
   }
 
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const getStatusBadge = (status) => {
+    const badges = {
+      pending: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      confirmed: 'bg-blue-100 text-blue-800 border-blue-300',
+      processing: 'bg-purple-100 text-purple-800 border-purple-300',
+      shipped: 'bg-indigo-100 text-indigo-800 border-indigo-300',
+      delivered: 'bg-green-100 text-green-800 border-green-300',
+      cancelled: 'bg-red-100 text-red-800 border-red-300',
+    }
+    return badges[status] || 'bg-gray-100 text-gray-800 border-gray-300'
+  }
+
+  const getStatusIcon = (status) => {
+    const icons = {
+      pending: '⏳',
+      confirmed: '✅',
+      processing: '⚙️',
+      shipped: '🚚',
+      delivered: '📦',
+      cancelled: '❌',
+    }
+    return icons[status] || '📋'
+  }
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -74,7 +140,9 @@ export default function CustomerOrders() {
   return (
     <CustomerLayout>
       <Head>
-        <title>My Orders - Empire Car A/C</title>
+        <title>My Orders - {siteConfig.brandName}</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </Head>
 
       <div className="container mx-auto px-4 py-8">
@@ -87,31 +155,31 @@ export default function CustomerOrders() {
             <p className="text-gray-600">Track and manage your orders</p>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="mb-6 flex flex-wrap gap-2">
-            {[
-              { value: 'all', label: 'All Orders' },
-              { value: 'pending', label: 'Pending' },
-              { value: 'quotation_sent', label: 'Quotations' },
-              { value: 'payment_pending', label: 'Payment Due' },
-              { value: 'processing', label: 'Processing' },
-              { value: 'ready_for_pickup', label: 'Ready' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'cancelled', label: 'Cancelled' },
-              { value: 'invoiced', label: 'Invoiced' },
-            ].map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setFilter(value)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === value
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
+          {/* Filter Tabs - Mobile scroll */}
+          <div className="mb-6 overflow-x-auto">
+            <div className="flex gap-2 min-w-max pb-2">
+              {[
+                { value: 'all', label: 'All' },
+                { value: 'pending', label: 'Pending' },
+                { value: 'confirmed', label: 'Confirmed' },
+                { value: 'processing', label: 'Processing' },
+                { value: 'shipped', label: 'Shipped' },
+                { value: 'delivered', label: 'Delivered' },
+                { value: 'cancelled', label: 'Cancelled' },
+              ].map(({ value, label }) => (
+                <button
+                  key={value}
+                  onClick={() => setFilter(value)}
+                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-all whitespace-nowrap touch-manipulation ${
+                    filter === value
+                      ? 'bg-blue-600 text-white shadow-lg'
+                      : 'bg-white text-gray-700 border-2 border-gray-200 hover:border-blue-300'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Orders List */}
@@ -137,54 +205,86 @@ export default function CustomerOrders() {
             </div>
           ) : (
             <div className="space-y-4">
-              {orders.map((order) => (
-                <Link
-                  key={order.id}
-                  href={`/customer/orders/${order.id}`}
-                  className="block bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-100"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    {/* Order Info */}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-bold text-gray-900">
-                          {order.order_number}
+              {orders.map((order) => {
+                const itemCount = order.order_items?.length || 0
+                const totalAmount = order.order_items?.reduce((sum, item) => sum + (item.admin_total || 0), 0) || 0
+                const hasPricing = totalAmount > 0
+                const isDelivered = order.status === 'delivered'
+                
+                return (
+                  <div key={order.id} className="card hover:shadow-xl transition-all">
+                    {/* Order Header */}
+                    <div className="flex items-start justify-between mb-4 pb-4 border-b border-gray-200">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs sm:text-sm font-bold border-2 ${getStatusBadge(order.status)}`}>
+                            <span>{getStatusIcon(order.status)}</span>
+                            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                          </span>
+                        </div>
+                        <h3 className="font-bold text-gray-900 text-base sm:text-lg mb-1">
+                          Order #{order.order_number}
                         </h3>
-                        {getStatusBadge(order.status)}
-                      </div>
-                      <div className="space-y-1 text-sm text-gray-600">
-                        <div className="flex items-center">
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
+                        <p className="text-xs sm:text-sm text-gray-600">
                           {formatDate(order.created_at)}
-                        </div>
-                        <div className="flex items-center">
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                          </svg>
-                          {order.order_items?.[0]?.count || 0} item(s)
-                        </div>
+                        </p>
                       </div>
                     </div>
 
-                    {/* View Details Button */}
-                    <div className="flex items-center text-blue-600 font-medium">
-                      View Details
-                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
+                    {/* Order Stats */}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Items</p>
+                        <p className="font-semibold text-gray-900">{itemCount}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Amount</p>
+                        <p className="font-semibold text-gray-900">
+                          {hasPricing ? `₹${totalAmount.toFixed(2)}` : 'Pending'}
+                        </p>
+                      </div>
+                      <div className="col-span-2 sm:col-span-1">
+                        <p className="text-xs text-gray-500 mb-1">Payment</p>
+                        <p className="font-semibold text-gray-900 capitalize">
+                          {order.payment_method || 'COD'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                      <Link
+                        href={`/customer/orders/${order.id}`}
+                        className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all font-semibold text-center text-sm touch-manipulation"
+                      >
+                        View Details
+                      </Link>
+                      {isDelivered && (
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault()
+                            handleReorder(order.id)
+                          }}
+                          disabled={reordering === order.id}
+                          className="px-4 py-2.5 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-all font-semibold text-sm disabled:opacity-50 touch-manipulation"
+                        >
+                          {reordering === order.id ? (
+                            <span className="flex items-center justify-center gap-2">
+                              <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                              </svg>
+                              Reordering...
+                            </span>
+                          ) : (
+                            '🔄 Reorder'
+                          )}
+                        </button>
+                      )}
                     </div>
                   </div>
-
-                  {/* Notes if any */}
-                  {order.notes && (
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <p className="text-sm text-gray-600 italic">Note: {order.notes}</p>
-                    </div>
-                  )}
-                </Link>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>

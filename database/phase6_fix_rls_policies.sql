@@ -6,6 +6,11 @@ DROP POLICY IF EXISTS "Users can view their own customer profile" ON customers;
 DROP POLICY IF EXISTS "Users can insert their own customer profile" ON customers;
 DROP POLICY IF EXISTS "Users can update their own customer profile" ON customers;
 
+-- Drop newly created policies if they exist (to fix re-run errors)
+DROP POLICY IF EXISTS "Allow signup - anyone can insert" ON customers;
+DROP POLICY IF EXISTS "Customers can view own profile" ON customers;
+DROP POLICY IF EXISTS "Customers can update own profile" ON customers;
+
 -- Create new policies that allow direct access
 -- Allow anyone to insert (for signup)
 CREATE POLICY "Allow signup - anyone can insert"

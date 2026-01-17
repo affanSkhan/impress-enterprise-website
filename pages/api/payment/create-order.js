@@ -1,5 +1,5 @@
 import Razorpay from 'razorpay'
-import { supabase } from '@/lib/supabaseAdmin'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
 /**
  * API: Create Razorpay Order
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     }
 
     // Verify order exists and belongs to the user
-    const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
       .select('*')
       .eq('id', orderId)

@@ -4,12 +4,14 @@ import Link from 'next/link'
 import AdminLayout from '@/components/AdminLayout'
 import { supabase } from '@/lib/supabaseClient'
 import { getStatusColor, getStatusDisplayName } from '@/utils/enhancedOrderHelpers'
+import { useAdminBusiness } from '@/context/AdminBusinessContext'
 
 /**
  * Admin Orders List Page
  * Shows all customer orders with search, filter, and status overview
  */
 export default function AdminOrders() {
+  const { businessType, getThemeColor } = useAdminBusiness()
   const [orders, setOrders] = useState([])
   const [customers, setCustomers] = useState({})
   const [loading, setLoading] = useState(true)
@@ -42,43 +44,58 @@ export default function AdminOrders() {
         query = query.eq('status', filter)
       }
 
+      // Apply Business Context filter
+      if (businessType !== 'all') {
+        query = query.eq('business_type', businessType)
+      }
+
       const { data, error } = await query
 
       if (error) throw error
 
-      // Fetch customer details for all orders
-      const customerIds = [...new Set(data.map(order => order.customer_id))]
-      const { data: customersData } = await supabase
-        .from('customers')
-        .select('id, name, phone')
-        .in('id', customerIds)
+      if (data && data.length > 0) {
+        // Fetch customer details for all orders
+        const customerIds = [...new Set(data.map(order => order.customer_id))]
+        const { data: customersData } = await supabase
+          .from('customers')
+          .select('id, name, phone')
+          .in('id', customerIds)
 
-      const customersMap = {}
-      customersData?.forEach(customer => {
-        customersMap[customer.id] = customer
-      })
+        const customersMap = {}
+        customersData?.forEach(customer => {
+          customersMap[customer.id] = customer
+        })
+        setCustomers(customersMap)
+      } else {
+        setCustomers({})
+      }
 
       setOrders(data || [])
-      setCustomers(customersMap)
 
       // Calculate stats
-      const allOrders = filter === 'all' ? data : await fetchAllOrdersForStats()
+      const allOrders = (filter === 'all') ? data : await fetchAllOrdersForStats()
       calculateStats(allOrders)
     } catch (error) {
       console.error('Error fetching orders:', error)
     } finally {
       setLoading(false)
     }
-  }, [filter])
+  }, [filter, businessType])
 
   async function fetchAllOrdersForStats() {
-    const { data } = await supabase
-      .from('orders')
-      .select('status')
+    let query = supabase.from('orders').select('status, is_cancelled, business_type')
+    
+    if (businessType !== 'all') {
+      query = query.eq('business_type', businessType)
+    }
+
+    const { data } = await query
     return data || []
   }
 
   function calculateStats(ordersData) {
+    if (!ordersData) return;
+    
     const newStats = {
       total: ordersData.length,
       pending: ordersData.filter(o => o.status === 'pending').length,
@@ -129,16 +146,23 @@ export default function AdminOrders() {
   return (
     <AdminLayout>
       <Head>
-        <title>Orders Management - Admin</title>
+        <title>Orders Management - {businessType === 'all' ? 'All' : businessType}</title>
       </Head>
 
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent mb-2">
-            Orders Management
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600">Review and manage customer orders</p>
+        <div className="mb-6 sm:mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-slate-600 bg-clip-text text-transparent mb-2 capitalize">
+              {businessType === 'all' ? 'Orders Management' : `${businessType} Orders`}
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600">Review and manage customer orders</p>
+          </div>
+           {businessType !== 'all' && (
+             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase bg-${getThemeColor()}-100 text-${getThemeColor()}-800`}>
+               {businessType} Mode
+             </span>
+           )}
         </div>
 
         {/* Stats Cards */}
@@ -255,6 +279,15 @@ export default function AdminOrders() {
                         <span className="text-gray-600">{customer?.phone || 'N/A'}</span>
                       </div>
                       <div className="flex items-center text-sm">
+                         <span className={`mr-2 h-2 w-2 rounded-full ${
+                             order.business_type === 'electronics' ? 'bg-blue-500' :
+                             order.business_type === 'furniture' ? 'bg-amber-600' :
+                             order.business_type === 'solar' ? 'bg-green-500' :
+                             'bg-gray-400'
+                         }`}></span>
+                         <span className="text-xs uppercase text-gray-500 font-bold">{order.business_type || 'ALL'}</span>
+                      </div>
+                      <div className="flex items-center text-sm">
                         <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                         </svg>
@@ -285,6 +318,11 @@ export default function AdminOrders() {
                       <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Order #
                       </th>
+                      {businessType === 'all' && (
+                        <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                           Type
+                        </th>
+                      )}
                       <th className="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                         Customer
                       </th>
@@ -298,7 +336,7 @@ export default function AdminOrders() {
                         Status
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        Actions
+                        Action
                       </th>
                     </tr>
                   </thead>
@@ -306,32 +344,38 @@ export default function AdminOrders() {
                     {filteredOrders.map((order) => {
                       const customer = customers[order.customer_id]
                       return (
-                        <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                        <tr key={order.id} className="hover:bg-blue-50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
+                            {order.order_number}
+                          </td>
+                           {businessType === 'all' && (
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-500 uppercase text-xs">
+                               <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                   order.business_type === 'electronics' ? 'bg-blue-100 text-blue-800' :
+                                   order.business_type === 'furniture' ? 'bg-amber-100 text-amber-800' :
+                                   order.business_type === 'solar' ? 'bg-green-100 text-green-800' :
+                                   'bg-gray-100 text-gray-800'
+                               }`}>
+                                 {order.business_type || 'all'}
+                               </span>
+                            </td>
+                          )}
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-semibold text-gray-900">{order.order_number}</div>
-                          </td>
-                          <td className="px-6 py-4">
                             <div className="text-sm font-medium text-gray-900">{customer?.name || 'Unknown'}</div>
-                            <div className="text-sm text-gray-500">{customer?.phone || 'N/A'}</div>
+                            <div className="text-xs text-gray-500">{customer?.phone || 'N/A'}</div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {formatDate(order.created_at)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {order.order_items?.[0]?.count || 0} item(s)
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             {getStatusBadge(order.status)}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <Link
-                              href={`/admin/orders/${order.id}`}
-                              className="inline-flex items-center px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition-all font-medium shadow-md"
-                            >
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <Link href={`/admin/orders/${order.id}`} className="text-blue-600 hover:text-blue-900 font-semibold hover:underline">
                               View Details
-                              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                              </svg>
                             </Link>
                           </td>
                         </tr>

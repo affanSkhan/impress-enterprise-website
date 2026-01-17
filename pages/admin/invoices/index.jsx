@@ -6,10 +6,12 @@ import AdminLayout from '@/components/AdminLayout';
 import useAdminAuth from '@/hooks/useAdminAuth';
 import { supabase } from '@/lib/supabaseClient';
 import { formatDate, formatCurrency } from '@/utils/invoiceHelpers';
+import { useAdminBusiness } from '@/context/AdminBusinessContext'
 
 export default function InvoicesListPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAdminAuth();
+  const { businessType, getThemeColor } = useAdminBusiness();
   
   const [invoices, setInvoices] = useState([]);
   const [filteredInvoices, setFilteredInvoices] = useState([]);
@@ -20,7 +22,7 @@ export default function InvoicesListPage() {
     if (user) {
       fetchInvoices();
     }
-  }, [user]);
+  }, [user, businessType]);
 
   useEffect(() => {
     filterInvoices();
@@ -29,11 +31,17 @@ export default function InvoicesListPage() {
   async function fetchInvoices() {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      let query = supabase
         .from('invoices')
         .select('*')
         .order('date', { ascending: false })
         .order('created_at', { ascending: false });
+
+      if (businessType !== 'all') {
+        query = query.eq('business_type', businessType);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setInvoices(data || []);
@@ -84,14 +92,21 @@ export default function InvoicesListPage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Invoices</h1>
             <p className="text-sm sm:text-base text-gray-600 mt-1">Manage and view all invoices</p>
           </div>
-          <Link href="/admin/invoices/new" className="btn-primary">
-            <span className="flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Create Invoice
-            </span>
-          </Link>
+          <div className="flex gap-2">
+             {businessType !== 'all' && (
+             <span className={`flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase bg-${getThemeColor()}-100 text-${getThemeColor()}-800`}>
+               {businessType} Invoices
+             </span>
+             )}
+            <Link href="/admin/invoices/new" className="btn-primary">
+                <span className="flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Create Invoice
+                </span>
+            </Link>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -229,6 +244,11 @@ export default function InvoicesListPage() {
                       <div>
                         <div className="text-sm font-bold text-primary-600 mb-1">{invoice.invoice_number}</div>
                         <div className="text-xs text-gray-500">{formatDate(invoice.date)}</div>
+                         {businessType === 'all' && invoice.business_type && (
+                          <span className={`text-xs px-2 py-0.5 rounded-full capitalize bg-gray-100 text-gray-600 mt-1 inline-block`}>
+                            {invoice.business_type}
+                          </span>
+                        )}
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-bold text-gray-900">₹{formatCurrency(invoice.total)}</div>
@@ -273,6 +293,11 @@ export default function InvoicesListPage() {
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                         Invoice #
                       </th>
+                       {businessType === 'all' && (
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                            Business
+                          </th>
+                        )}
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                         Date
                       </th>
@@ -296,24 +321,35 @@ export default function InvoicesListPage() {
                         <td className="px-4 py-4 whitespace-nowrap">
                           <span className="font-medium text-primary-600 text-sm">{invoice.invoice_number}</span>
                         </td>
+                         {businessType === 'all' && (
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 capitalize">
+                              {invoice.business_type || 'all'}
+                            </span>
+                          </td>
+                        )}
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
                           {formatDate(invoice.date)}
                         </td>
-                        <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="font-medium text-gray-900 text-sm">{invoice.customer_name}</div>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                          {invoice.customer_name}
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-600">
-                          {invoice.customer_phone || '—'}
+                          {invoice.customer_phone || '-'}
                         </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right font-semibold text-gray-900 text-sm">
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-bold">
                           ₹{formatCurrency(invoice.total)}
                         </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
+                        <td className="px-4 py-4 whitespace-nowrap text-center text-sm font-medium">
                           <Link
                             href={`/admin/invoices/${invoice.id}`}
-                            className="text-primary-600 hover:text-primary-700 font-medium text-sm"
+                            className="text-primary-600 hover:text-primary-900 flex items-center justify-center gap-1"
                           >
-                            View Details →
+                            <span>View</span>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
                           </Link>
                         </td>
                       </tr>
@@ -324,13 +360,6 @@ export default function InvoicesListPage() {
             </>
           )}
         </div>
-
-        {/* Results count */}
-        {filteredInvoices.length > 0 && (
-          <p className="text-sm text-gray-600 mt-4 text-center">
-            Showing {filteredInvoices.length} of {invoices.length} invoice{invoices.length !== 1 ? 's' : ''}
-          </p>
-        )}
       </div>
     </AdminLayout>
   );

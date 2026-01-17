@@ -46,7 +46,7 @@ export default function NewInvoicePage() {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, brand, car_model')
+        .select('id, name, brand, sku')
         .eq('is_active', true)
         .order('name');
 
@@ -92,10 +92,10 @@ export default function NewInvoicePage() {
     const product = products.find(p => p.id === productId);
     setItems(items.map(item => {
       if (item.id === itemId) {
-        return {
+            return {
           ...item,
           product_id: productId,
-          item_name: product ? `${product.name}${product.car_model ? ` - ${product.car_model}` : ''}` : ''
+          item_name: product ? `${product.name}${product.sku ? ` - ${product.sku}` : ''}` : ''
         };
       }
       return item;
@@ -323,7 +323,7 @@ export default function NewInvoicePage() {
                           <option value="">Select or enter manually</option>
                           {products.map(product => (
                             <option key={product.id} value={product.id}>
-                              {product.name} {product.car_model && `(${product.car_model})`}
+                              {product.name} {product.sku && `(${product.sku})`}
                             </option>
                           ))}
                         </select>

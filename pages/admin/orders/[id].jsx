@@ -72,7 +72,7 @@ export default function AdminOrderDetail() {
             name,
             slug,
             brand,
-            car_model,
+            sku,
             price,
             product_images(image_url, is_primary)
           )
@@ -587,7 +587,7 @@ export default function AdminOrderDetail() {
                     )}
                     <div className="text-[10px] sm:text-xs text-gray-500 space-y-0.5 sm:space-y-1">
                       {item.product?.brand && <p>Brand: {item.product.brand}</p>}
-                      {item.product?.car_model && <p>Model: {item.product.car_model}</p>}
+                      {item.product?.sku && <p>SKU: {item.product.sku}</p>}
                     </div>
                   </div>
                 </div>

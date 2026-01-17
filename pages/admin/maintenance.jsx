@@ -27,7 +27,7 @@ export default function SystemMaintenance() {
   return (
     <AdminLayout>
       <Head>
-        <title>System Maintenance - Empire Car A/C</title>
+        <title>System Maintenance - Impress Enterprise</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 

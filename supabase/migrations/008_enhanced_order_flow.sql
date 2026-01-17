@@ -1,53 +1,15 @@
--- Enhanced Order Flow Migration - Part 1: Add Enum Values
+-- Enhanced Order Flow Migration - Updated for TEXT status column
 -- Adds payment tracking, quotation tracking, and cancellation support
 -- Date: 2025-12-04
 
 -- =====================================================
--- IMPORTANT: Run this migration in TWO parts
--- Part 1: Add enum values (lines 1-20)
--- Part 2: Add columns and functions (lines 21+)
+-- UPDATE ORDER STATUS CHECK CONSTRAINT
 -- =====================================================
+-- Update the CHECK constraint to include new statuses
 
--- =====================================================
--- PART 1: ADD NEW ORDER STATUSES TO ENUM
--- =====================================================
--- Note: These must be added first and committed before using them
-
-DO $$ 
-BEGIN
-    -- Add new statuses one by one with error handling
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'quotation_sent' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'quotation_sent';
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'quote_approved' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'quote_approved';
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'payment_pending' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'payment_pending';
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'payment_received' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'payment_received';
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'processing' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'processing';
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'ready_for_pickup' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'ready_for_pickup';
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'completed' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'completed';
-    END IF;
-    
-    IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'cancelled' AND enumtypid = 'order_status'::regtype) THEN
-        ALTER TYPE order_status ADD VALUE 'cancelled';
-    END IF;
-END $$;
+ALTER TABLE orders DROP CONSTRAINT IF EXISTS orders_status_check;
+ALTER TABLE orders ADD CONSTRAINT orders_status_check 
+  CHECK (status IN ('pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'quotation_sent', 'quote_approved', 'payment_pending', 'payment_received', 'ready_for_pickup', 'completed'));
 
 -- =====================================================
 -- 2. ADD PAYMENT TRACKING FIELDS
@@ -303,31 +265,21 @@ SELECT * FROM orders
 WHERE is_cancelled = FALSE
 ORDER BY created_at DESC;
 
--- Note: The following views use new enum values and should be created
--- after the enum values have been committed. If you get errors,
--- run these views separately after the main migration completes.
-
 -- View for pending payment orders
 CREATE OR REPLACE VIEW pending_payment_orders AS
 SELECT 
-  o.*,
-  c.name as customer_name,
-  c.phone as customer_phone
+  o.*
 FROM orders o
-JOIN customers c ON o.customer_id = c.id
-WHERE o.status::text IN ('payment_pending', 'quote_approved')
+WHERE o.status IN ('payment_pending', 'quote_approved')
   AND o.is_cancelled = FALSE
 ORDER BY o.created_at DESC;
 
 -- View for orders ready for pickup
 CREATE OR REPLACE VIEW ready_orders AS
 SELECT 
-  o.*,
-  c.name as customer_name,
-  c.phone as customer_phone
+  o.*
 FROM orders o
-JOIN customers c ON o.customer_id = c.id
-WHERE o.status::text = 'ready_for_pickup'
+WHERE o.status = 'ready_for_pickup'
   AND o.is_cancelled = FALSE
 ORDER BY o.updated_at DESC;
 
@@ -335,7 +287,7 @@ ORDER BY o.updated_at DESC;
 -- MIGRATION COMPLETE
 -- =====================================================
 -- New features added:
--- 1. Enhanced order statuses (9 total)
+-- 1. Enhanced order statuses (12 total)
 -- 2. Payment tracking and verification
 -- 3. Quotation tracking
 -- 4. Order cancellation support

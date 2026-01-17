@@ -23,7 +23,7 @@ export default function InvoiceDetailPage() {
 
   // Business information (⚠️ UPDATE WITH YOUR DETAILS)
   const businessInfo = {
-    name: 'Empire Car A/C',
+    name: 'Impress Enterprise',
     address: 'Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati',
     city: 'Amravati',
     state: 'Maharashtra',

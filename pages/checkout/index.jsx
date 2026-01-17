@@ -374,7 +374,7 @@ export default function CheckoutPage() {
         <title>Checkout - {siteConfig.brandName}</title>
         <meta name="robots" content="noindex, nofollow" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
       </Head>
 
       <div className="max-w-6xl mx-auto">

@@ -14,6 +14,7 @@ import siteConfig from '@/site.config'
  * Public page displaying all active products with filtering
  * Phase 2: Enhanced with live data fetching, responsive grid, and SEO
  * Filters persist in URL query parameters for better UX
+ * Supports solar-specific mode when accessed with ?solar=true
  */
 export default function ProductsPage() {
   const router = useRouter()
@@ -23,33 +24,42 @@ export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [loading, setLoading] = useState(true)
   const [totalProducts, setTotalProducts] = useState(0)
+  const [isSolarMode, setIsSolarMode] = useState(false)
 
   // Initialize filters from URL on mount
   useEffect(() => {
     if (router.isReady) {
-      const { category, search } = router.query
+      const { category, search, solar } = router.query
       if (category) setSelectedCategory(category)
       if (search) setSearchTerm(search)
+      if (solar === 'true') setIsSolarMode(true)
     }
   }, [router.isReady])
 
   // Fetch categories on mount
   useEffect(() => {
     fetchCategories()
-  }, [])
+  }, [isSolarMode])
 
   // Fetch products when filters change
   useEffect(() => {
     if (router.isReady) {
       fetchProducts()
     }
-  }, [selectedCategory, searchTerm, router.isReady])
+  }, [selectedCategory, searchTerm, router.isReady, isSolarMode])
 
   async function fetchCategories() {
-    const { data, error } = await supabase
+    let query = supabase
       .from('categories')
       .select('*')
       .order('name')
+
+    // Filter categories by business type in solar mode
+    if (isSolarMode) {
+      query = query.eq('business_type', 'solar')
+    }
+
+    const { data, error } = await query
 
     if (!error && data) {
       setCategories(data)
@@ -68,14 +78,19 @@ export default function ProductsPage() {
       `, { count: 'exact' })
       .eq('is_active', true)
 
+    // Filter by business type in solar mode
+    if (isSolarMode) {
+      query = query.eq('business_type', 'solar')
+    }
+
     // Filter by category
     if (selectedCategory !== 'all') {
       query = query.eq('category_id', selectedCategory)
     }
 
-    // Search filter (name, brand, or car_model)
+    // Search filter (name, brand, or sku)
     if (searchTerm) {
-      query = query.or(`name.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%,car_model.ilike.%${searchTerm}%`)
+      query = query.or(`name.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`)
     }
 
     // Sort by most recent first
@@ -95,6 +110,7 @@ export default function ProductsPage() {
     const query = {}
     if (category && category !== 'all') query.category = category
     if (search) query.search = search
+    if (isSolarMode) query.solar = 'true'
 
     router.push(
       {
@@ -122,46 +138,110 @@ export default function ProductsPage() {
   function clearSearch() {
     setSearchTerm('')
     setSelectedCategory('all')
-    router.push('/products', undefined, { shallow: true })
+    const query = isSolarMode ? { solar: 'true' } : {}
+    router.push('/products', query, { shallow: true })
   }
 
   return (
     <>
       <Head>
-        <title>Our Services & Products - {siteConfig.brandName} | {siteConfig.location.city}</title>
-        <meta name="description" content={`Browse our services: ${siteConfig.services.solar.name} and ${siteConfig.services.electronics.name}. Solar panels, AC service, refrigerator repair, washing machines. Contact us for pricing.`} />
-        <meta name="keywords" content="solar panel installation, electronics service, AC repair, refrigerator service, washing machine repair, solar inverter, daryapur, amravati" />
+        <title>
+          {isSolarMode 
+            ? `Solar Products & Services - ${siteConfig.brandName} | ${siteConfig.location.city}`
+            : `Our Services & Products - ${siteConfig.brandName} | ${siteConfig.location.city}`
+          }
+        </title>
+        <meta 
+          name="description" 
+          content={
+            isSolarMode
+              ? `Solar panel installation, solar inverters, batteries & accessories. Professional solar installation services in ${siteConfig.location.city}. Get free consultation.`
+              : `Browse our services: ${siteConfig.services.solar.name} and ${siteConfig.services.electronics.name}. Solar panels, AC service, refrigerator repair, washing machines. Contact us for pricing.`
+          } 
+        />
+        <meta 
+          name="keywords" 
+          content={
+            isSolarMode
+              ? "solar panels, solar installation, solar inverters, solar batteries, solar accessories, solar power, daryapur, amravati"
+              : "solar panel installation, electronics service, AC repair, refrigerator service, washing machine repair, solar inverter, daryapur, amravati"
+          } 
+        />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={`Our Services & Products - ${siteConfig.brandName}`} />
+        <meta 
+          property="og:title" 
+          content={
+            isSolarMode
+              ? `Solar Products & Services - ${siteConfig.brandName}`
+              : `Our Services & Products - ${siteConfig.brandName}`
+          } 
+        />
         <meta property="og:description" content={siteConfig.description} />
-        <meta property="og:url" content={`${siteConfig.domain}/products`} />
+        <meta property="og:url" content={`${siteConfig.domain}/products${isSolarMode ? '?solar=true' : ''}`} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Our Services & Products - ${siteConfig.brandName}`} />
+        <meta 
+          name="twitter:title" 
+          content={
+            isSolarMode
+              ? `Solar Products & Services - ${siteConfig.brandName}`
+              : `Our Services & Products - ${siteConfig.brandName}`
+          } 
+        />
         <meta name="twitter:description" content={siteConfig.description} />
         
-        <link rel="canonical" href={`${siteConfig.domain}/products`} />
+        <link rel="canonical" href={`${siteConfig.domain}/products${isSolarMode ? '?solar=true' : ''}`} />
       </Head>
 
       <Navbar />
 
-      <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 py-6 sm:py-8 lg:py-12">
+      <main className={`min-h-screen py-6 sm:py-8 lg:py-12 ${
+        isSolarMode 
+          ? 'bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50'
+          : 'bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50'
+      }`}>
         <div className="container mx-auto px-4">
           {/* Page Header */}
           <div className="mb-6 sm:mb-8">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              Services & Products
+            <h1 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 ${
+              isSolarMode 
+                ? 'bg-gradient-to-r from-amber-600 via-orange-500 to-yellow-700 bg-clip-text text-transparent'
+                : 'bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent'
+            }`}>
+              {isSolarMode ? 'Solar Products & Services' : 'Services & Products'}
             </h1>
             <p className="text-base sm:text-lg text-gray-700">
-              Browse our selection of {totalProducts} services and products
+              {isSolarMode 
+                ? `Browse our selection of ${totalProducts} solar products and services`
+                : `Browse our selection of ${totalProducts} services and products`
+              }
             </p>
+            {isSolarMode && (
+              <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-100 to-orange-100 px-4 py-2 rounded-full border border-amber-200">
+                  <span className="text-2xl">{siteConfig.services.solar.icon}</span>
+                  <span className="font-semibold text-amber-800">Solar Energy Solutions</span>
+                </div>
+                <Link 
+                  href="/products" 
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Back to All Products
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Filters Section */}
-          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border-t-4 border-blue-500">
+          <div className={`bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border-t-4 ${
+            isSolarMode ? 'border-amber-500' : 'border-blue-500'
+          }`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Search */}
               <div>

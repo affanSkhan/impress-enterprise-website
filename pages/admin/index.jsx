@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import AdminLayout from '@/components/AdminLayout'
 import { supabase } from '@/lib/supabaseClient'
 import useAdminAuth from '@/hooks/useAdminAuth'
+import { useAdminBusiness } from '@/context/AdminBusinessContext'
 
 /**
  * Admin Dashboard - Main Overview Page
@@ -11,6 +12,7 @@ import useAdminAuth from '@/hooks/useAdminAuth'
  */
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useAdminAuth()
+  const { businessType, getThemeColor } = useAdminBusiness()
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalCategories: 0,
@@ -25,16 +27,39 @@ export default function AdminDashboard() {
   })
   const [recentOrders, setRecentOrders] = useState([])
 
-  useEffect(() => {
-    if (user) {
-      fetchStats()
-    }
-  }, [user])
-
-  async function fetchStats() {
+  const fetchStats = useCallback(async () => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
     const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
     
+    // Prepare base queries
+    let productsQuery = supabase.from('products').select('id', { count: 'exact', head: true })
+    let categoriesQuery = supabase.from('categories').select('id', { count: 'exact', head: true })
+    let activeProductsQuery = supabase.from('products').select('id', { count: 'exact', head: true }).eq('is_active', true)
+    let invoicesQuery = supabase.from('invoices').select('id', { count: 'exact', head: true }).gte('created_at', thirtyDaysAgo)
+    let ordersQuery = supabase.from('orders').select('id', { count: 'exact', head: true })
+    let pendingOrdersQuery = supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending')
+    let customersQuery = supabase.from('customers').select('id', { count: 'exact', head: true })
+    let revenueQuery = supabase.from('invoices').select('total').gte('created_at', startOfMonth)
+    let recentOrdersQuery = supabase.from('orders').select('*, customer:customers(name)').order('created_at', { ascending: false }).limit(5)
+    let bookingsQuery = supabase.from('service_bookings').select('id', { count: 'exact', head: true })
+    let pendingBookingsQuery = supabase.from('service_bookings').select('id', { count: 'exact', head: true }).eq('status', 'pending')
+
+    // Apply Business Filters if specific business selected
+    if (businessType !== 'all') {
+      productsQuery = productsQuery.eq('business_type', businessType)
+      // categoriesQuery - Categories might be global or specific, assuming global for now or we need a specific column there too
+      activeProductsQuery = activeProductsQuery.eq('business_type', businessType)
+      invoicesQuery = invoicesQuery.eq('business_type', businessType)
+      ordersQuery = ordersQuery.eq('business_type', businessType)
+      pendingOrdersQuery = pendingOrdersQuery.eq('business_type', businessType)
+      // Customers often cross-vertical, but if segmented:
+      // customersQuery = customersQuery.eq('business_type', businessType) 
+      revenueQuery = revenueQuery.eq('business_type', businessType)
+      recentOrdersQuery = recentOrdersQuery.eq('business_type', businessType)
+      bookingsQuery = bookingsQuery.eq('business_type', businessType)
+      pendingBookingsQuery = pendingBookingsQuery.eq('business_type', businessType)
+    }
+
     // Fetch dashboard statistics
     const [
       productsRes, 
@@ -49,17 +74,17 @@ export default function AdminDashboard() {
       bookingsRes,
       pendingBookingsRes
     ] = await Promise.all([
-      supabase.from('products').select('id', { count: 'exact', head: true }),
-      supabase.from('categories').select('id', { count: 'exact', head: true }),
-      supabase.from('products').select('id', { count: 'exact', head: true }).eq('is_active', true),
-      supabase.from('invoices').select('id', { count: 'exact', head: true }).gte('created_at', thirtyDaysAgo),
-      supabase.from('orders').select('id', { count: 'exact', head: true }),
-      supabase.from('orders').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabase.from('customers').select('id', { count: 'exact', head: true }),
-      supabase.from('invoices').select('total').gte('created_at', startOfMonth),
-      supabase.from('orders').select('*, customer:customers(name)').order('created_at', { ascending: false }).limit(5),
-      supabase.from('service_bookings').select('id', { count: 'exact', head: true }),
-      supabase.from('service_bookings').select('id', { count: 'exact', head: true }).eq('status', 'pending')
+      productsQuery,
+      categoriesQuery, 
+      activeProductsQuery, 
+      invoicesQuery,
+      ordersQuery,
+      pendingOrdersQuery,
+      customersQuery,
+      revenueQuery,
+      recentOrdersQuery,
+      bookingsQuery,
+      pendingBookingsQuery
     ])
 
     const monthlyRevenue = revenueRes.data?.reduce((sum, inv) => sum + (inv.total || 0), 0) || 0
@@ -76,9 +101,16 @@ export default function AdminDashboard() {
       totalBookings: bookingsRes.count || 0,
       pendingBookings: pendingBookingsRes.count || 0,
     })
-    
+
     setRecentOrders(recentOrdersRes.data || [])
-  }
+  }, [businessType])
+
+  useEffect(() => {
+    if (user) {
+      console.log('Business context changed:', businessType)
+      fetchStats()
+    }
+  }, [user, fetchStats, businessType]) // Re-fetch when businessType changes
 
   if (authLoading) {
     return (
@@ -96,12 +128,21 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <Head>
-        <title>Admin Dashboard - Empire Car A/C</title>
+        <title>Admin Dashboard - {businessType === 'all' ? 'All Businesses' : businessType.charAt(0).toUpperCase() + businessType.slice(1)}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-700 bg-clip-text text-transparent">Dashboard</h1>
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+           <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-600 via-amber-500 to-yellow-700 bg-clip-text text-transparent capitalize">
+             {businessType === 'all' ? 'Group Dashboard' : `${businessType} Dashboard`}
+           </h1>
+           {businessType !== 'all' && (
+             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase bg-${getThemeColor()}-100 text-${getThemeColor()}-800`}>
+               {businessType} Mode
+             </span>
+           )}
+        </div>
 
         {/* Stats Cards - Row 1 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6">
@@ -251,7 +292,7 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="card mb-6 sm:mb-8">
-          <h2 className="text-lg sm:text-xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Quick Actions</h2>
+          <h2 className="text-lg sm:text-xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Quick Actions [ {businessType.toUpperCase()} ]</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <Link href="/admin/orders" className="flex items-center p-3 sm:p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl hover:from-orange-100 hover:to-amber-100 transition-all border border-orange-200 hover:shadow-lg transform hover:-translate-y-1">
               <div className="bg-gradient-to-br from-orange-600 to-amber-600 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0 shadow-md">
@@ -261,11 +302,23 @@ export default function AdminDashboard() {
               </div>
               <div className="min-w-0">
                 <p className="font-semibold text-sm sm:text-base">View Orders</p>
-                <p className="text-xs sm:text-sm text-gray-600 truncate">Manage customer orders</p>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">Manage {businessType === 'all' ? '' : businessType} orders</p>
               </div>
             </Link>
 
-            <Link href="/admin/products/new" className="flex items-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:from-blue-100 hover:to-cyan-100 transition-all border border-blue-200 hover:shadow-lg transform hover:-translate-y-1">
+            <Link href="/admin/deliveries" className="flex items-center p-3 sm:p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl hover:from-purple-100 hover:to-pink-100 transition-all border border-purple-200 hover:shadow-lg transform hover:-translate-y-1">
+              <div className="bg-gradient-to-br from-purple-600 to-pink-600 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0 shadow-md">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                </svg>
+              </div>
+              <div className="min-w-0">
+                <p className="font-semibold text-sm sm:text-base">Delivery Board</p>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">Track deliveries</p>
+              </div>
+            </Link>
+
+            <Link href={businessType && businessType !== 'all' ? `/admin/products/new/${businessType}` : '/admin/products/new'} className="flex items-center p-3 sm:p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:from-blue-100 hover:to-cyan-100 transition-all border border-blue-200 hover:shadow-lg transform hover:-translate-y-1">
               <div className="bg-gradient-to-br from-blue-600 to-cyan-600 p-2 sm:p-3 rounded-lg mr-3 sm:mr-4 flex-shrink-0 shadow-md">
                 <svg className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -273,7 +326,7 @@ export default function AdminDashboard() {
               </div>
               <div className="min-w-0">
                 <p className="font-semibold text-sm sm:text-base">Add Product</p>
-                <p className="text-xs sm:text-sm text-gray-600 truncate">Create new product</p>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">Create new {businessType === 'all' ? '' : businessType} product</p>
               </div>
             </Link>
 
@@ -316,7 +369,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Orders */}
-        {recentOrders.length > 0 && (
+        {recentOrders.length > 0 ? (
           <div className="card mb-6 sm:mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Recent Orders</h2>
@@ -398,13 +451,18 @@ export default function AdminDashboard() {
               </table>
             </div>
           </div>
+        ) : (
+             <div className="card mb-6 sm:mb-8 text-center py-8">
+              <p className="text-gray-500">No recent orders for {businessType === 'all' ? 'any business' : businessType} context.</p>
+              <Link href="/admin/orders" className="text-blue-600 hover:underline mt-2 inline-block">View All Orders</Link>
+            </div>
         )}
 
         {/* Welcome Message */}
         <div className="card bg-gradient-to-r from-purple-50 via-blue-50 to-cyan-50 border-l-4 border-purple-600 shadow-xl">
           <h3 className="text-base sm:text-lg font-semibold mb-2 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Welcome to the Admin Dashboard</h3>
           <p className="text-sm sm:text-base text-gray-700 mb-2">
-            Complete management system for Empire Spare Parts with full e-commerce functionality.
+            Complete management system for Empire Enterprise ({businessType === 'all' ? 'All Verticals' : businessType}).
           </p>
           <div className="flex flex-wrap gap-2 mt-3">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">

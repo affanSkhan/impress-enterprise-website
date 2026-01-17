@@ -4,6 +4,7 @@ import Link from 'next/link'
 import AdminLayout from '@/components/AdminLayout'
 import { supabase } from '@/lib/supabaseClient'
 import useAdminAuth from '@/hooks/useAdminAuth'
+import { useAdminBusiness } from '@/context/AdminBusinessContext'
 
 /**
  * Admin Bookings Management Page
@@ -11,6 +12,9 @@ import useAdminAuth from '@/hooks/useAdminAuth'
  */
 export default function AdminBookings() {
   const { user, loading: authLoading } = useAdminAuth()
+  const { businessType, getThemeColor } = useAdminBusiness()
+  const theme = getThemeColor();
+  
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedStatus, setSelectedStatus] = useState('all')
@@ -24,7 +28,7 @@ export default function AdminBookings() {
       fetchBookings()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, selectedStatus])
+  }, [user, selectedStatus, businessType])
 
   async function fetchBookings() {
     setLoading(true)
@@ -33,6 +37,10 @@ export default function AdminBookings() {
         .from('service_bookings')
         .select('*')
         .order('created_at', { ascending: false })
+
+      if (businessType !== 'all') {
+        query = query.eq('business_type', businessType)
+      }
 
       if (selectedStatus !== 'all') {
         query = query.eq('status', selectedStatus)
@@ -165,7 +173,7 @@ export default function AdminBookings() {
       <AdminLayout>
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <div className={`animate-spin rounded-full h-12 w-12 border-b-2 border-${theme}-600 mx-auto`}></div>
             <p className="mt-4 text-gray-600">Loading...</p>
           </div>
         </div>
@@ -181,13 +189,20 @@ export default function AdminBookings() {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </Head>
 
-      <div>
+      <div className={`min-h-screen bg-gradient-to-br from-${theme}-50 via-white to-orange-50 p-6`}>
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Service Bookings
-          </h1>
-          <p className="text-gray-600">Manage service appointments and technician assignments</p>
+        <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className={`text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-${theme}-600 to-${theme}-800 bg-clip-text text-transparent`}>
+              Service Bookings
+            </h1>
+            <p className="text-gray-600">Manage service appointments and technician assignments</p>
+          </div>
+          {businessType !== 'all' && (
+             <div className={`px-4 py-2 rounded-lg bg-${theme}-100 text-${theme}-800 font-bold uppercase`}>
+               {businessType} Bookings
+             </div>
+          )}
         </div>
 
         {/* View Toggle */}
@@ -197,7 +212,7 @@ export default function AdminBookings() {
               onClick={() => setViewMode('list')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 viewMode === 'list'
-                  ? 'bg-white text-indigo-600 shadow-sm'
+                  ? `bg-white text-${theme}-600 shadow-sm`
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -207,7 +222,7 @@ export default function AdminBookings() {
               onClick={() => setViewMode('calendar')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 viewMode === 'calendar'
-                  ? 'bg-white text-indigo-600 shadow-sm'
+                  ? `bg-white text-${theme}-600 shadow-sm`
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
@@ -231,13 +246,13 @@ export default function AdminBookings() {
                     onClick={() => setSelectedStatus(tab.value)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                       selectedStatus === tab.value
-                        ? 'bg-indigo-600 text-white shadow-lg'
+                        ? `bg-${theme}-600 text-white shadow-lg`
                         : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                     }`}
                   >
                     {tab.label}
                     <span className={`ml-2 ${
-                      selectedStatus === tab.value ? 'text-indigo-200' : 'text-gray-500'
+                      selectedStatus === tab.value ? `text-${theme}-200` : 'text-gray-500'
                     }`}>
                       ({tab.count})
                     </span>
@@ -249,17 +264,21 @@ export default function AdminBookings() {
             {/* Bookings List */}
             {loading ? (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+                <div className={`animate-spin rounded-full h-12 w-12 border-b-2 border-${theme}-600 mx-auto`}></div>
                 <p className="mt-4 text-gray-600">Loading bookings...</p>
               </div>
             ) : bookings.length === 0 ? (
-              <div className="card text-center py-12">
+              <div className="card bg-white p-6 rounded-lg shadow-sm text-center py-12">
                 <div className="text-6xl mb-4">📭</div>
-                <p className="text-gray-600 mb-4">No bookings found</p>
+                <p className="text-gray-600 mb-4">
+                    {businessType !== 'all' 
+                     ? `No ${businessType} bookings found` 
+                     : 'No bookings found'}
+                </p>
                 {selectedStatus !== 'all' && (
                   <button
                     onClick={() => setSelectedStatus('all')}
-                    className="text-indigo-600 hover:text-indigo-700 font-medium"
+                    className={`text-${theme}-600 hover:text-${theme}-700 font-medium`}
                   >
                     View all bookings
                   </button>
@@ -268,14 +287,19 @@ export default function AdminBookings() {
             ) : (
               <div className="space-y-4">
                 {bookings.map((booking) => (
-                  <div key={booking.id} className="card hover:shadow-lg transition-shadow">
+                  <div key={booking.id} className={`bg-white rounded-lg p-6 shadow-sm hover:shadow-lg transition-shadow border-l-4 border-${theme}-500`}>
                     <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                       {/* Booking Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <h3 className="font-bold text-lg text-gray-900">
+                            <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
                               {booking.booking_number}
+                              {businessType === 'all' && booking.business_type && (
+                                <span className="text-xs font-normal bg-gray-100 text-gray-600 px-2 py-0.5 rounded capitalize">
+                                    {booking.business_type}
+                                </span>
+                              )}
                             </h3>
                             <p className="text-sm text-gray-600">{booking.customer_name}</p>
                           </div>
@@ -331,7 +355,7 @@ export default function AdminBookings() {
                       <div className="flex sm:flex-col gap-2">
                         <Link
                           href={`/admin/bookings/${booking.id}`}
-                          className="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-center text-sm font-medium"
+                          className={`flex-1 sm:flex-none px-4 py-2 bg-${theme}-600 text-white rounded-lg hover:bg-${theme}-700 transition-colors text-center text-sm font-medium`}
                         >
                           View Details
                         </Link>
@@ -371,7 +395,7 @@ export default function AdminBookings() {
           </>
         ) : (
           // Calendar View
-          <div className="card">
+          <div className="bg-white rounded-lg shadow-md p-6">
             {/* Calendar Header */}
             <div className="flex items-center justify-between mb-6">
               <button
@@ -416,12 +440,12 @@ export default function AdminBookings() {
                     key={index}
                     className={`min-h-24 border rounded-lg p-2 ${
                       date ? 'bg-white hover:bg-gray-50' : 'bg-gray-50'
-                    } ${isToday ? 'border-indigo-600 border-2' : 'border-gray-200'}`}
+                    } ${isToday ? `border-${theme}-600 border-2` : 'border-gray-200'}`}
                   >
                     {date && (
                       <>
                         <div className={`text-sm font-medium mb-1 ${
-                          isToday ? 'text-indigo-600' : 'text-gray-900'
+                          isToday ? `text-${theme}-600` : 'text-gray-900'
                         }`}>
                           {date.getDate()}
                         </div>

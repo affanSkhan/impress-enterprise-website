@@ -131,7 +131,7 @@ export default function CustomerNotificationsPage() {
   return (
     <CustomerLayout>
       <Head>
-        <title>Notifications - Empire Car A/C</title>
+        <title>Notifications - Impress Enterprise</title>
       </Head>
 
       <div className="max-w-4xl mx-auto">

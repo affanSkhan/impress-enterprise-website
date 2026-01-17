@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { supabase } from '@/lib/supabaseAdmin'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
 /**
  * API: Verify Razorpay Payment
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
     if (!isValid) {
       // Invalid signature - update transaction as failed
-      await supabase
+      await supabaseAdmin
         .from('payment_transactions')
         .update({
           status: 'failed',
@@ -53,7 +53,7 @@ export default async function handler(req, res) {
     const now = new Date().toISOString()
 
     // Update order status
-    const { data: order } = await supabase
+    const { data: order } = await supabaseAdmin
       .from('orders')
       .update({
         payment_status: 'completed',
@@ -64,7 +64,7 @@ export default async function handler(req, res) {
       .single()
 
     // Update payment transaction
-    await supabase
+    await supabaseAdmin
       .from('payment_transactions')
       .update({
         razorpay_payment_id: razorpay_payment_id,

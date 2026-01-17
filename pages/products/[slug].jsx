@@ -81,8 +81,8 @@ export default function ProductDetailsPage() {
   // Generate WhatsApp message
   function getWhatsAppLink() {
     if (!product) return '#'
-    
-    const message = `Hello, I want details for: ${product.name}${product.car_model ? ` (${product.car_model})` : ''}`
+
+    const message = `Hello, I want details for: ${product.name}`
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
   }
 
@@ -202,7 +202,7 @@ export default function ProductDetailsPage() {
 
   // SEO metadata
   const pageTitle = `${product.name} - Empire Spare Parts`
-  const pageDescription = product.description || `${product.name} spare part for ${product.car_model || 'vehicles'}. Contact us for pricing and availability.`
+  const pageDescription = product.description || `${product.name} - contact us for pricing and availability.`
 
   // Build back URL with preserved filters
   const buildBackUrl = () => {
@@ -220,7 +220,7 @@ export default function ProductDetailsPage() {
       <Head>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <meta name="keywords" content={`${product.name}, ${product.brand || ''}, ${product.car_model || ''}, spare parts`} />
+        <meta name="keywords" content={`${product.name}, ${product.brand || ''}, spare parts`} />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="product" />
@@ -371,17 +371,7 @@ export default function ProductDetailsPage() {
                   </div>
                 )}
 
-                {product.car_model && (
-                  <div className="flex items-center text-gray-700">
-                    <svg className="w-5 h-5 mr-3 text-primary-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
-                    </svg>
-                    <div>
-                      <span className="text-sm text-gray-500 block">Compatible With</span>
-                      <span className="font-medium">{product.car_model}</span>
-                    </div>
-                  </div>
-                )}
+                {/* business-specific compatibility removed; use description or specs instead */}
               </div>
 
               {/* Description */}

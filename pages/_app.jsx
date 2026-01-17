@@ -1,6 +1,8 @@
 import '@/styles/globals.css'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { isNativeApp, initNativePush } from '@/utils/nativePushNotifications'
+import { AdminBusinessProvider } from '@/context/AdminBusinessContext'
 
 /**
  * Error Boundary Component
@@ -112,7 +114,12 @@ export default function App({ Component, pageProps }) {
 
   return (
     <ErrorBoundary>
-      <Component {...pageProps} />
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+      </Head>
+      <AdminBusinessProvider>
+        <Component {...pageProps} />
+      </AdminBusinessProvider>
     </ErrorBoundary>
   )
 }

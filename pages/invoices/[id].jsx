@@ -21,7 +21,7 @@ export default function PublicInvoicePage() {
 
   // Business information
   const businessInfo = {
-    name: 'Empire Car A/C',
+    name: 'Impress Enterprise',
     address: 'Shop Number 19, Usmaniya Masjid Complex, Bus Stand Road, Amravati',
     city: 'Amravati',
     state: 'Maharashtra',
@@ -116,7 +116,7 @@ export default function PublicInvoicePage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <Head>
-          <title>Invoice Not Found - Empire Car A/C</title>
+          <title>Invoice Not Found - Impress Enterprise</title>
         </Head>
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-md text-center">
           <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -138,7 +138,7 @@ export default function PublicInvoicePage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <Head>
-        <title>Invoice #{invoice.invoice_number} - Empire Car A/C</title>
+        <title>Invoice #{invoice.invoice_number} - Impress Enterprise</title>
         <meta name="robots" content="noindex" />
       </Head>
 

@@ -27,7 +27,7 @@ export default function AdminNotificationsPage() {
   return (
     <AdminLayout>
       <Head>
-        <title>Notification Settings - Empire Car A/C Admin</title>
+        <title>Notification Settings - Impress Enterprise Admin</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 

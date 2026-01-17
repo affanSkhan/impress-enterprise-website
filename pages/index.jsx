@@ -50,30 +50,32 @@ export default function Home() {
       <Navbar />
 
       <main className="min-h-screen">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-amber-600 via-blue-500 to-cyan-500 text-white py-12 sm:py-16 lg:py-24 relative overflow-hidden">
+        {/* Hero Section - Mobile Optimized */}
+        <section className="bg-gradient-to-br from-amber-600 via-blue-500 to-cyan-500 text-white py-8 sm:py-12 lg:py-20 relative overflow-hidden">
           <div className="absolute inset-0 bg-black opacity-10"></div>
-          <div className="container mx-auto px-4 relative z-10">
+          <div className="container mx-auto px-4 sm:px-6 relative z-10">
             <div className="flex flex-col items-center text-center">
               {/* Logo */}
-              <div className="mb-6 animate-fade-in">
+              <div className="mb-4 sm:mb-6">
                 <Logo size="large" className="[&_.text-gray-900]:text-white [&_.bg-gradient-to-r]:from-slate-300 [&_.bg-gradient-to-r]:to-blue-300" />
               </div>
               
-              <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed">
-                Your one-stop solution for solar energy systems, quality electronics, and premium furniture. 
-                Serving {siteConfig.location.city} with excellence, reliability, and professional service.
+              {/* Tagline - Simplified for mobile */}
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4 px-4">
+                Solar • Electronics • Furniture
+              </h1>
+              
+              <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
+                Quality products and expert services for your home and business in {siteConfig.location.city}
               </p>
               
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="#services" className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:from-cyan-600 hover:to-blue-700 transition-all transform hover:scale-105 text-center font-semibold shadow-lg">
-                  View Our Services
+              {/* CTA Buttons - Better mobile spacing */}
+              <div className="w-full max-w-md flex flex-col gap-3 px-4">
+                <Link href="/products" className="w-full px-6 py-4 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all text-center font-bold shadow-xl text-lg">
+                  🛍️ Browse Products
                 </Link>
-                <Link href="/services" className="px-6 py-3 border-2 border-white bg-white/10 backdrop-blur-sm text-white rounded-lg hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 text-center font-semibold">
-                  Book a Service
-                </Link>
-                <Link href="/contact" className="px-6 py-3 border-2 border-white bg-white/10 backdrop-blur-sm text-white rounded-lg hover:bg-white hover:text-blue-600 transition-all transform hover:scale-105 text-center font-semibold">
-                  Contact Us
+                <Link href="/contact" className="w-full px-6 py-4 border-2 border-white bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white hover:text-blue-600 transition-all text-center font-semibold">
+                  📞 Contact Us
                 </Link>
               </div>
             </div>
@@ -83,189 +85,190 @@ export default function Home() {
         {/* Product Showcase Section - NEW */}
         <ProductShowcase />
 
-        {/* Services Banner - 3 Cards + Book Service CTA */}
-        <section id="services" className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-slate-50 to-blue-50">
-          <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-            <div className="max-w-7xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-center bg-gradient-to-r from-amber-600 via-blue-600 to-teal-600 bg-clip-text text-transparent">Our Professional Services</h2>
-              <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-                Quality products and services for your home, office, and energy needs
+        {/* Services Banner - Mobile First Design */}
+        <section id="services" className="py-8 sm:py-12 lg:py-16 bg-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 text-center bg-gradient-to-r from-amber-600 via-blue-600 to-teal-600 bg-clip-text text-transparent">
+                Our Services
+              </h2>
+              <p className="text-center text-gray-600 mb-8 text-sm sm:text-base px-4">
+                Tap to explore each category
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                {/* Solar Service */}
-                <Link href="/products" className="group bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border-2 border-amber-200">
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <span className="text-5xl">{siteConfig.services.solar.icon}</span>
+              <div className="grid grid-cols-1 gap-5 mb-8">
+                {/* Solar Service - Enhanced Mobile Card */}
+                <Link href="/products?solar=true" className="group bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 shadow-lg active:scale-95 transition-all border-2 border-amber-200">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                      <span className="text-4xl sm:text-5xl">{siteConfig.services.solar.icon}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl sm:text-2xl font-bold text-amber-700 mb-1">{siteConfig.services.solar.name}</h3>
+                      <p className="text-gray-600 text-sm">{siteConfig.services.solar.description}</p>
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 text-center text-amber-700">{siteConfig.services.solar.name}</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed mb-5 text-center">{siteConfig.services.solar.description}</p>
-                  <ul className="text-xs text-gray-600 space-y-2 mb-6">
+                  <div className="grid grid-cols-2 gap-2 mb-4">
                     {siteConfig.services.solar.offerings.slice(0, 4).map((offering, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="text-amber-600 font-bold">✓</span>
-                        <span>{offering}</span>
-                      </li>
+                      <div key={i} className="flex items-start gap-2 text-xs sm:text-sm">
+                        <span className="text-amber-600 font-bold text-base mt-0.5">✓</span>
+                        <span className="text-gray-700">{offering}</span>
+                      </div>
                     ))}
-                  </ul>
-                  <div className="text-center">
-                    <span className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg group-hover:from-amber-600 group-hover:to-orange-700 transition-all font-semibold shadow-md">
-                      Explore Solar
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </span>
+                  </div>
+                  <div className="flex items-center justify-between bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-xl px-5 py-3 font-semibold">
+                    <span>Explore Solar Products</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </Link>
                 
                 {/* Electronics Service */}
-                <Link href="/electronics" className="group bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border-2 border-blue-200">
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <span className="text-5xl">{siteConfig.services.electronics.icon}</span>
+                <Link href="/electronics" className="group bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 shadow-lg active:scale-95 transition-all border-2 border-blue-200">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                      <span className="text-4xl sm:text-5xl">{siteConfig.services.electronics.icon}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl sm:text-2xl font-bold text-blue-700 mb-1">{siteConfig.services.electronics.name}</h3>
+                      <p className="text-gray-600 text-sm">{siteConfig.services.electronics.description}</p>
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 text-center text-blue-700">{siteConfig.services.electronics.name}</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed mb-5 text-center">{siteConfig.services.electronics.description}</p>
-                  <ul className="text-xs text-gray-600 space-y-2 mb-6">
+                  <div className="grid grid-cols-2 gap-2 mb-4">
                     {siteConfig.services.electronics.offerings.slice(0, 4).map((offering, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="text-blue-600 font-bold">✓</span>
-                        <span>{offering}</span>
-                      </li>
+                      <div key={i} className="flex items-start gap-2 text-xs sm:text-sm">
+                        <span className="text-blue-600 font-bold text-base mt-0.5">✓</span>
+                        <span className="text-gray-700">{offering}</span>
+                      </div>
                     ))}
-                  </ul>
-                  <div className="text-center">
-                    <span className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg group-hover:from-blue-600 group-hover:to-cyan-700 transition-all font-semibold shadow-md">
-                      Shop Electronics
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </span>
+                  </div>
+                  <div className="flex items-center justify-between bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-xl px-5 py-3 font-semibold">
+                    <span>Shop Electronics</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </Link>
 
                 {/* Furniture Service */}
-                <Link href="/furniture" className="group bg-gradient-to-br from-teal-50 via-emerald-50 to-teal-100 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-2 border-2 border-teal-200">
-                  <div className="flex items-center justify-center mb-6">
-                    <div className="w-20 h-20 bg-gradient-to-br from-teal-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                      <span className="text-5xl">{siteConfig.services.furniture.icon}</span>
+                <Link href="/furniture" className="group bg-gradient-to-br from-teal-50 to-emerald-50 rounded-2xl p-6 shadow-lg active:scale-95 transition-all border-2 border-teal-200">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-teal-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                      <span className="text-4xl sm:text-5xl">{siteConfig.services.furniture.icon}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl sm:text-2xl font-bold text-teal-700 mb-1">{siteConfig.services.furniture.name}</h3>
+                      <p className="text-gray-600 text-sm">{siteConfig.services.furniture.description}</p>
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold mb-3 text-center text-teal-700">{siteConfig.services.furniture.name}</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed mb-5 text-center">{siteConfig.services.furniture.description}</p>
-                  <ul className="text-xs text-gray-600 space-y-2 mb-6">
+                  <div className="grid grid-cols-2 gap-2 mb-4">
                     {siteConfig.services.furniture.offerings.slice(0, 4).map((offering, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="text-teal-600 font-bold">✓</span>
-                        <span>{offering}</span>
-                      </li>
+                      <div key={i} className="flex items-start gap-2 text-xs sm:text-sm">
+                        <span className="text-teal-600 font-bold text-base mt-0.5">✓</span>
+                        <span className="text-gray-700">{offering}</span>
+                      </div>
                     ))}
-                  </ul>
-                  <div className="text-center">
-                    <span className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-lg group-hover:from-teal-600 group-hover:to-emerald-700 transition-all font-semibold shadow-md">
-                      Browse Furniture
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </span>
+                  </div>
+                  <div className="flex items-center justify-between bg-gradient-to-r from-teal-500 to-emerald-600 text-white rounded-xl px-5 py-3 font-semibold">
+                    <span>Browse Furniture</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
                 </Link>
               </div>
 
-              {/* Book Service CTA */}
-              <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700 rounded-2xl p-8 sm:p-12 shadow-2xl text-center text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-black opacity-10"></div>
-                <div className="relative z-10">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-6">
+              {/* Need Service CTA - Simplified for Mobile */}
+              <div className="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-6 sm:p-8 shadow-xl text-white mb-6">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4">
                     <span className="text-4xl">{siteConfig.services.repair.icon}</span>
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-bold mb-4">Need Repair or Installation Service?</h3>
-                  <p className="text-lg mb-8 text-indigo-100 max-w-2xl mx-auto">
-                    Expert technicians for AC service, refrigerator repair, solar maintenance, and more
+                  <h3 className="text-xl sm:text-2xl font-bold mb-2">Need Repair Service?</h3>
+                  <p className="text-sm sm:text-base mb-5 text-indigo-100">
+                    Expert repairs for AC, refrigerators, solar systems & more
                   </p>
-                  <Link href="/services" className="inline-flex items-center gap-3 px-8 py-4 bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 transition-all font-bold shadow-xl text-lg group">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 transition-all font-bold shadow-lg w-full sm:w-auto justify-center">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
-                    Book a Service
-                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                    Request Service
                   </Link>
                 </div>
               </div>
 
               {/* Location Badge */}
-              <div className="mt-12 flex justify-center">
-                <div className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-lg">
+              <div className="flex justify-center">
+                <div className="inline-flex items-center gap-2 bg-white px-5 py-3 rounded-full shadow-md border border-gray-200">
                   <svg className="w-5 h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <span className="font-semibold text-gray-900">Serving {siteConfig.location.city}, {siteConfig.location.district}</span>
+                  <span className="font-semibold text-gray-900 text-sm sm:text-base">Serving {siteConfig.location.city}</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-slate-50 to-blue-50">
+        {/* Why Choose Us - Mobile Optimized */}
+        <section className="py-8 sm:py-12 lg:py-16 bg-gradient-to-br from-slate-50 to-blue-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-8 sm:mb-12 bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent">Why Choose Us?</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              <div className="text-center bg-gradient-to-br from-amber-50 via-amber-100 to-orange-100 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-amber-200/50">
-                <div className="bg-gradient-to-br from-amber-400 to-orange-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 bg-gradient-to-r from-amber-600 to-blue-600 bg-clip-text text-transparent">
+              Why Choose Us?
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+              <div className="text-center bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+                <div className="bg-gradient-to-br from-amber-400 to-orange-600 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Certified Solar Solutions</h3>
-                <p className="text-gray-600">
-                  Quality solar panels, inverters, and batteries with professional installation and maintenance
+                <h3 className="text-lg font-bold mb-2 text-gray-900">Quality Products</h3>
+                <p className="text-gray-600 text-sm">
+                  Certified solar panels, inverters & quality electronics
                 </p>
               </div>
               
-              <div className="text-center bg-gradient-to-br from-blue-50 via-blue-100 to-cyan-100 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-blue-200/50">
-                <div className="bg-gradient-to-br from-blue-400 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <div className="text-center bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+                <div className="bg-gradient-to-br from-blue-400 to-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Expert Electronics Service</h3>
-                <p className="text-gray-600">
-                  Skilled technicians for AC, refrigerator, washing machine, and appliance repair
+                <h3 className="text-lg font-bold mb-2 text-gray-900">Expert Service</h3>
+                <p className="text-gray-600 text-sm">
+                  Skilled technicians for repairs & installations
                 </p>
               </div>
               
-              <div className="text-center bg-gradient-to-br from-cyan-50 via-cyan-100 to-blue-100 rounded-xl p-6 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-cyan-200/50">
-                <div className="bg-gradient-to-br from-cyan-400 to-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              <div className="text-center bg-white rounded-2xl p-5 shadow-md border border-gray-100">
+                <div className="bg-gradient-to-br from-cyan-400 to-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Local Service Excellence</h3>
-                <p className="text-gray-600">
-                  Trusted service in {siteConfig.location.city} for all your solar and electronics needs
+                <h3 className="text-lg font-bold mb-2 text-gray-900">Local & Trusted</h3>
+                <p className="text-gray-600 text-sm">
+                  Serving {siteConfig.location.city} with excellence
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-12 sm:py-16 lg:py-20 xl:py-24 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-100">
-          <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 text-center">
-            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-amber-600 via-blue-600 to-cyan-700 bg-clip-text text-transparent">Explore Our Services</h2>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto">
-              Browse our solar solutions and electronics offerings - Request service or get a quote
-            </p>
-            <Link href="/products" className="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:via-cyan-700 hover:to-blue-800 transition-all transform hover:scale-105 font-semibold text-base sm:text-lg shadow-xl">
-              View All Services
-            </Link>
+        {/* Quick Action Bar - Mobile Sticky */}
+        <section className="py-6 bg-gradient-to-r from-blue-600 to-cyan-600">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Link href="/products" className="w-full sm:w-auto px-6 py-3 bg-white text-blue-600 rounded-xl hover:bg-blue-50 transition-all font-bold shadow-lg text-center">
+                🛍️ Browse All Products
+              </Link>
+              <Link href="/contact" className="w-full sm:w-auto px-6 py-3 border-2 border-white text-white rounded-xl hover:bg-white hover:text-blue-600 transition-all font-semibold text-center">
+                📞 Get in Touch
+              </Link>
+            </div>
           </div>
         </section>
       </main>

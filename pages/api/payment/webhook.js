@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { supabase } from '@/lib/supabaseAdmin'
+import { supabaseAdmin } from '@/lib/supabaseAdmin'
 
 /**
  * API: Razorpay Webhook
@@ -67,7 +67,7 @@ async function handlePaymentSuccess(payment) {
     const paymentId = payment.id
 
     // Update payment transaction
-    await supabase
+    await supabaseAdmin
       .from('payment_transactions')
       .update({
         razorpay_payment_id: paymentId,
@@ -79,7 +79,7 @@ async function handlePaymentSuccess(payment) {
       .eq('razorpay_order_id', razorpayOrderId)
 
     // Update order status
-    await supabase
+    await supabaseAdmin
       .from('orders')
       .update({
         payment_status: 'completed',
@@ -99,7 +99,7 @@ async function handlePaymentFailed(payment) {
     const paymentId = payment.id
 
     // Update payment transaction
-    await supabase
+    await supabaseAdmin
       .from('payment_transactions')
       .update({
         razorpay_payment_id: paymentId,
@@ -121,7 +121,7 @@ async function handleOrderPaid(order) {
     const razorpayOrderId = order.id
 
     // Update order status
-    await supabase
+    await supabaseAdmin
       .from('orders')
       .update({
         payment_status: 'completed',

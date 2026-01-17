@@ -134,13 +134,13 @@ export default function ProductCard({ product }) {
             </div>
           )}
 
-          {/* Car Model */}
-          {product.car_model && (
+          {/* SKU */}
+          {product.sku && (
             <div className="flex items-center text-sm text-gray-600 mb-3">
               <svg className="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7h18M3 12h18M3 17h18" />
               </svg>
-              <span className="truncate">{product.car_model}</span>
+              <span className="truncate">{product.sku}</span>
             </div>
           )}
 

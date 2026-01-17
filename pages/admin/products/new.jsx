@@ -5,20 +5,32 @@ import AdminLayout from '@/components/AdminLayout';
 import Toast from '@/components/Toast';
 import { supabase } from '@/lib/supabaseClient';
 import { slugify } from '@/utils/slugify';
+import { useAdminBusiness } from '@/context/AdminBusinessContext'
 
-export default function NewProductPage() {
+export default function NewProductPage({ initialBusinessType = '' }) {
   const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
     category_id: '',
-    car_model: '',
     brand: '',
     description: '',
     price: '',
     stock_quantity: '',
     is_active: true,
+    // business-specific fields
+    business_type: '',
+    sku: '',
+    warranty_months: '',
+    specs: '',
+    material: '',
+    length: '',
+    width: '',
+    height: '',
+    wattage: '',
+    panel_type: '',
+    warranty_years: ''
   });
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -26,6 +38,17 @@ export default function NewProductPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  // If page was opened via /admin/products/new/[type], prefill business_type
+  useEffect(() => {
+    if (initialBusinessType && !formData.business_type) {
+      setFormData(prev => ({ ...prev, business_type: initialBusinessType }))
+    }
+  }, [initialBusinessType])
+
+  const { businessType } = useAdminBusiness()
+  // resolvedBusinessType: prefer initialBusinessType prop (if any), then context businessType
+  const resolvedBusinessType = (typeof initialBusinessType !== 'undefined' && initialBusinessType) || businessType || formData.business_type
 
   async function fetchCategories() {
     try {
@@ -35,7 +58,16 @@ export default function NewProductPage() {
         .order('name', { ascending: true });
 
       if (error) throw error;
-      setCategories(data || []);
+      // If categories include a business_type column, filter client-side 
+      const filtered = (data || []).filter(cat => {
+        if (!cat) return false
+        // Filter out legacy car categories (those without business_type or explicit car categories)
+        if (!cat.business_type) return false 
+        
+        if (!resolvedBusinessType || resolvedBusinessType === 'all') return true
+        return cat.business_type === resolvedBusinessType
+      })
+      setCategories(filtered);
     } catch (error) {
       console.error('Error fetching categories:', error);
       showToast('error', 'Failed to load categories');
@@ -77,19 +109,44 @@ export default function NewProductPage() {
     try {
       setLoading(true);
 
+      // determine business type to save
+      const resolvedBusinessType = businessType && businessType !== 'all' ? businessType : (formData.business_type || null)
+
+      const payload = {
+        name: formData.name.trim(),
+        slug: formData.slug.trim(),
+        category_id: formData.category_id,
+        brand: formData.brand.trim() || null,
+        description: formData.description.trim() || null,
+        price: formData.price ? parseFloat(formData.price) : 0,
+        stock_quantity: formData.stock_quantity ? parseInt(formData.stock_quantity) : 0,
+        is_active: formData.is_active,
+        business_type: resolvedBusinessType,
+      }
+
+      // include business-specific attributes
+      if (resolvedBusinessType === 'electronics') {
+        payload.sku = formData.sku || null
+        payload.warranty_months = formData.warranty_months ? parseInt(formData.warranty_months) : null
+        payload.specs = formData.specs ? formData.specs.trim() : null
+      }
+
+      if (resolvedBusinessType === 'furniture') {
+        payload.material = formData.material || null
+        payload.length = formData.length ? parseFloat(formData.length) : null
+        payload.width = formData.width ? parseFloat(formData.width) : null
+        payload.height = formData.height ? parseFloat(formData.height) : null
+      }
+
+      if (resolvedBusinessType === 'solar') {
+        payload.wattage = formData.wattage ? parseFloat(formData.wattage) : null
+        payload.panel_type = formData.panel_type || null
+        payload.warranty_years = formData.warranty_years ? parseInt(formData.warranty_years) : null
+      }
+
       const { data, error } = await supabase
         .from('products')
-        .insert({
-          name: formData.name.trim(),
-          slug: formData.slug.trim(),
-          category_id: formData.category_id,
-          car_model: formData.car_model.trim() || null,
-          brand: formData.brand.trim() || null,
-          description: formData.description.trim() || null,
-          price: formData.price ? parseFloat(formData.price) : 0,
-          stock_quantity: formData.stock_quantity ? parseInt(formData.stock_quantity) : 0,
-          is_active: formData.is_active,
-        })
+        .insert(payload)
         .select('*')
         .single();
 
@@ -154,7 +211,7 @@ export default function NewProductPage() {
                   value={formData.name}
                   onChange={handleNameChange}
                   className="input-field"
-                  placeholder="e.g., AC Compressor"
+                  placeholder="e.g., Solar Panel X1, Smart TV, or Sofa Set"
                   required
                 />
                 {formData.slug && (
@@ -196,24 +253,11 @@ export default function NewProductPage() {
                   value={formData.brand}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="e.g., OEM"
+                  placeholder="e.g., Luminous, Samsung, Ikea"
                 />
               </div>
 
-              <div className="md:col-span-2">
-                <label htmlFor="car_model" className="block text-sm font-medium text-gray-700 mb-2">
-                  Car Model
-                </label>
-                <input
-                  type="text"
-                  id="car_model"
-                  name="car_model"
-                  value={formData.car_model}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="e.g., Swift 2018-2021"
-                />
-              </div>
+              {/* No car_model field — fields are business-specific for electronics, furniture, solar */}
 
               <div className="md:col-span-2">
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
@@ -269,6 +313,83 @@ export default function NewProductPage() {
                   Current stock available (alerts when ≤ 5)
                 </p>
               </div>
+
+              {/* Business selector when context is 'all' */}
+              {businessType === 'all' && (
+                <div>
+                  <label htmlFor="business_type" className="block text-sm font-medium text-gray-700 mb-2">Business Type</label>
+                  <select
+                    id="business_type"
+                    name="business_type"
+                    value={formData.business_type}
+                    onChange={handleChange}
+                    className="input-field"
+                  >
+                    <option value="">Select business</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="furniture">Furniture</option>
+                    <option value="solar">Solar</option>
+                  </select>
+                </div>
+              )}
+
+              {/* Electronics fields */}
+              {(businessType === 'electronics' || formData.business_type === 'electronics') && (
+                <>
+                  <div>
+                    <label htmlFor="sku" className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+                    <input id="sku" name="sku" value={formData.sku} onChange={handleChange} className="input-field" placeholder="e.g., SKU-12345" />
+                  </div>
+                  <div>
+                    <label htmlFor="warranty_months" className="block text-sm font-medium text-gray-700 mb-2">Warranty (months)</label>
+                    <input id="warranty_months" name="warranty_months" value={formData.warranty_months} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label htmlFor="specs" className="block text-sm font-medium text-gray-700 mb-2">Specifications (JSON or text)</label>
+                    <textarea id="specs" name="specs" value={formData.specs} onChange={handleChange} rows={3} className="input-field" placeholder='e.g., {"voltage":"12V","amps":"5A"}' />
+                  </div>
+                </>
+              )}
+
+              {/* Furniture fields */}
+              {(businessType === 'furniture' || formData.business_type === 'furniture') && (
+                <>
+                  <div>
+                    <label htmlFor="material" className="block text-sm font-medium text-gray-700 mb-2">Material</label>
+                    <input id="material" name="material" value={formData.material} onChange={handleChange} className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-2">Length (cm)</label>
+                    <input id="length" name="length" value={formData.length} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-2">Width (cm)</label>
+                    <input id="width" name="width" value={formData.width} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-2">Height (cm)</label>
+                    <input id="height" name="height" value={formData.height} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                </>
+              )}
+
+              {/* Solar fields */}
+              {(businessType === 'solar' || formData.business_type === 'solar') && (
+                <>
+                  <div>
+                    <label htmlFor="wattage" className="block text-sm font-medium text-gray-700 mb-2">Wattage (W)</label>
+                    <input id="wattage" name="wattage" value={formData.wattage} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="panel_type" className="block text-sm font-medium text-gray-700 mb-2">Panel Type</label>
+                    <input id="panel_type" name="panel_type" value={formData.panel_type} onChange={handleChange} className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="warranty_years" className="block text-sm font-medium text-gray-700 mb-2">Warranty (years)</label>
+                    <input id="warranty_years" name="warranty_years" value={formData.warranty_years} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                </>
+              )}
 
               <div className="md:col-span-2">
                 <div className="flex items-center">

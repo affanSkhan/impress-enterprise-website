@@ -74,7 +74,7 @@ export default function EnvDiagnostics() {
   return (
     <AdminLayout>
       <Head>
-        <title>Environment Diagnostics - Empire Car A/C</title>
+        <title>Environment Diagnostics - Impress Enterprise</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 

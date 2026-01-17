@@ -281,7 +281,7 @@ export default function NotificationSetup() {
   return (
     <AdminLayout>
       <Head>
-        <title>Notification Setup - Empire Car A/C</title>
+        <title>Notification Setup - Impress Enterprise</title>
       </Head>
 
       <div className="max-w-4xl">

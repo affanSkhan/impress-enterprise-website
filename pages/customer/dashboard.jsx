@@ -85,7 +85,7 @@ export default function CustomerDashboard() {
   return (
     <CustomerLayout>
       <Head>
-        <title>Dashboard - Empire Car A/C</title>
+        <title>Dashboard - Impress Enterprise</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 

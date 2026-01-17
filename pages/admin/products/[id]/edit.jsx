@@ -17,11 +17,21 @@ export default function EditProductPage() {
     name: '',
     slug: '',
     category_id: '',
-    car_model: '',
     brand: '',
     description: '',
     price: '',
     is_active: true,
+    business_type: '',
+    sku: '',
+    warranty_months: '',
+    specs: '',
+    material: '',
+    length: '',
+    width: '',
+    height: '',
+    wattage: '',
+    panel_type: '',
+    warranty_years: ''
   });
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -51,11 +61,22 @@ export default function EditProductPage() {
           name: data.name,
           slug: data.slug,
           category_id: data.category_id,
-          car_model: data.car_model || '',
+          // car_model removed — deprecated for current businesses
           brand: data.brand || '',
           description: data.description || '',
           price: data.price || '',
           is_active: data.is_active,
+          business_type: data.business_type || '',
+          sku: data.sku || '',
+          warranty_months: data.warranty_months || '',
+          specs: data.specs ? (typeof data.specs === 'string' ? data.specs : JSON.stringify(data.specs)) : '',
+          material: data.material || '',
+          length: data.length || '',
+          width: data.width || '',
+          height: data.height || '',
+          wattage: data.wattage || '',
+          panel_type: data.panel_type || '',
+          warranty_years: data.warranty_years || ''
         });
       }
     } catch (error) {
@@ -120,6 +141,17 @@ export default function EditProductPage() {
     });
   }
 
+  // helper to detect JSON
+  function isJSON(str) {
+    if (!str || typeof str !== 'string') return false;
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -137,11 +169,22 @@ export default function EditProductPage() {
           name: formData.name.trim(),
           slug: formData.slug.trim(),
           category_id: formData.category_id,
-          car_model: formData.car_model.trim() || null,
+          // car_model removed — deprecated for current businesses
           brand: formData.brand.trim() || null,
           description: formData.description.trim() || null,
           price: formData.price ? parseFloat(formData.price) : 0,
           is_active: formData.is_active,
+          business_type: formData.business_type || null,
+          sku: formData.sku || null,
+          warranty_months: formData.warranty_months ? parseInt(formData.warranty_months) : null,
+          specs: formData.specs ? (isJSON(formData.specs) ? JSON.parse(formData.specs) : formData.specs) : null,
+          material: formData.material || null,
+          length: formData.length ? parseFloat(formData.length) : null,
+          width: formData.width ? parseFloat(formData.width) : null,
+          height: formData.height ? parseFloat(formData.height) : null,
+          wattage: formData.wattage ? parseFloat(formData.wattage) : null,
+          panel_type: formData.panel_type || null,
+          warranty_years: formData.warranty_years ? parseInt(formData.warranty_years) : null,
         })
         .eq('id', id);
 
@@ -283,7 +326,7 @@ export default function EditProductPage() {
                   value={formData.name}
                   onChange={handleNameChange}
                   className="input-field"
-                  placeholder="e.g., Front Bumper"
+                  placeholder="e.g., Solar Panel X1"
                   required
                 />
                 <p className="text-sm text-gray-500 mt-1">
@@ -326,23 +369,12 @@ export default function EditProductPage() {
                   value={formData.brand}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="e.g., OEM"
+                  placeholder="e.g., Luminous, Samsung, Ikea"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label htmlFor="car_model" className="block text-sm font-medium text-gray-700 mb-2">
-                  Car Model
-                </label>
-                <input
-                  type="text"
-                  id="car_model"
-                  name="car_model"
-                  value={formData.car_model}
-                  onChange={handleChange}
-                  className="input-field"
-                  placeholder="e.g., Swift 2018-2021"
-                />
+                {/* car_model field removed — UI only supports electronics, furniture, solar */}
               </div>
 
               <div className="md:col-span-2">
@@ -359,6 +391,64 @@ export default function EditProductPage() {
                   placeholder="Enter product description..."
                 />
               </div>
+
+              {/* Electronics fields */}
+              {(formData.business_type === 'electronics') && (
+                <>
+                  <div>
+                    <label htmlFor="sku" className="block text-sm font-medium text-gray-700 mb-2">SKU</label>
+                    <input id="sku" name="sku" value={formData.sku} onChange={handleChange} className="input-field" placeholder="e.g., SKU-12345" />
+                  </div>
+                  <div>
+                    <label htmlFor="warranty_months" className="block text-sm font-medium text-gray-700 mb-2">Warranty (months)</label>
+                    <input id="warranty_months" name="warranty_months" value={formData.warranty_months} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label htmlFor="specs" className="block text-sm font-medium text-gray-700 mb-2">Specifications (JSON or text)</label>
+                    <textarea id="specs" name="specs" value={formData.specs} onChange={handleChange} rows={3} className="input-field" placeholder='e.g., {"voltage":"12V","amps":"5A"}' />
+                  </div>
+                </>
+              )}
+
+              {/* Furniture fields */}
+              {(formData.business_type === 'furniture') && (
+                <>
+                  <div>
+                    <label htmlFor="material" className="block text-sm font-medium text-gray-700 mb-2">Material</label>
+                    <input id="material" name="material" value={formData.material} onChange={handleChange} className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="length" className="block text-sm font-medium text-gray-700 mb-2">Length (cm)</label>
+                    <input id="length" name="length" value={formData.length} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="width" className="block text-sm font-medium text-gray-700 mb-2">Width (cm)</label>
+                    <input id="width" name="width" value={formData.width} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="height" className="block text-sm font-medium text-gray-700 mb-2">Height (cm)</label>
+                    <input id="height" name="height" value={formData.height} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                </>
+              )}
+
+              {/* Solar fields */}
+              {(formData.business_type === 'solar') && (
+                <>
+                  <div>
+                    <label htmlFor="wattage" className="block text-sm font-medium text-gray-700 mb-2">Wattage (W)</label>
+                    <input id="wattage" name="wattage" value={formData.wattage} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="panel_type" className="block text-sm font-medium text-gray-700 mb-2">Panel Type</label>
+                    <input id="panel_type" name="panel_type" value={formData.panel_type} onChange={handleChange} className="input-field" />
+                  </div>
+                  <div>
+                    <label htmlFor="warranty_years" className="block text-sm font-medium text-gray-700 mb-2">Warranty (years)</label>
+                    <input id="warranty_years" name="warranty_years" value={formData.warranty_years} onChange={handleChange} type="number" className="input-field" />
+                  </div>
+                </>
+              )}
 
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">

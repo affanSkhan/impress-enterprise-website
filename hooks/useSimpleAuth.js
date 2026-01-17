@@ -48,11 +48,16 @@ export default function useSimpleAuth() {
       const hashedPassword = btoa(password) // Base64 encoding for now
       
       // Check if phone already exists
-      const { data: existing } = await supabase
+      const { data: existing, error: checkError } = await supabase
         .from('customers')
         .select('id')
         .eq('phone', phone)
-        .single()
+        .maybeSingle()
+      
+      if (checkError) {
+        console.error('Check existing user error:', checkError)
+        // verify connection/table validity
+      }
       
       if (existing) {
         return { success: false, error: 'Phone number already registered' }

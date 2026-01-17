@@ -7,15 +7,18 @@ import NotificationBell from './NotificationBell'
 import PWAInstallPrompt from './PWAInstallPrompt'
 import { supabase } from '@/lib/supabaseClient'
 import { subscribeToPushNotifications } from '@/utils/pushNotifications'
+import { useAdminBusiness } from '@/context/AdminBusinessContext'
+import BusinessSwitcher from './BusinessSwitcher'
 
 /**
- * Admin Layout Component
- * Wraps all admin pages with navigation and authentication
+ * Admin Layout Content
+ * Internal component that consumes the context
  */
-export default function AdminLayout({ children }) {
+function AdminLayoutContent({ children }) {
   const router = useRouter()
   const [user, setUser] = useState(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false) // Start closed on mobile
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { businessType, isVisible, getThemeColor } = useAdminBusiness()
 
   useEffect(() => {
     // Check authentication
@@ -45,15 +48,11 @@ export default function AdminLayout({ children }) {
       navigator.serviceWorker
         .register('/sw.js')
         .then(async (registration) => {
-          console.log('Service Worker registered successfully:', registration.scope);
-          
           // Check if already subscribed before attempting to subscribe
-          // This prevents unsubscribing and resubscribing on every page load
           const existingSubscription = await registration.pushManager.getSubscription();
           if (existingSubscription) {
-            console.log('Already subscribed to push notifications');
+            // Already subscribed
           }
-          // Note: Don't auto-subscribe here - let user control it via Notifications settings page
         })
         .catch((error) => {
           console.error('Service Worker registration failed:', error);
@@ -68,11 +67,17 @@ export default function AdminLayout({ children }) {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className={`min-h-screen flex items-center justify-center bg-${getThemeColor()}-50`}>
+        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600`}></div>
       </div>
     )
   }
+
+  const themeColor = getThemeColor() // 'amber', 'blue', 'teal', 'slate'
+  
+  // Theme classes helpers
+  const sidebarActiveClass = `bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white shadow-md`
+  const sidebarHoverClass = `text-gray-700 hover:bg-gray-100`
 
   return (
     <>
@@ -82,12 +87,12 @@ export default function AdminLayout({ children }) {
       </Head>
       <div className="min-h-screen bg-gray-100">
       {/* Top Navigation Bar */}
-      <nav className="bg-gradient-to-r from-white via-slate-50 to-blue-50 shadow-lg fixed top-0 left-0 right-0 z-40 backdrop-blur-sm">
+      <nav className="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-40">
         <div className="flex items-center justify-between px-3 sm:px-4 h-16">
           <div className="flex items-center">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 mr-2 sm:mr-4"
+              className="p-2 rounded-lg hover:bg-gray-100 mr-2 sm:mr-4 text-gray-600"
               aria-label="Toggle sidebar"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,26 +101,41 @@ export default function AdminLayout({ children }) {
             </button>
             <Link href="/admin" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <Logo size="small" showText={false} />
-              <span className="hidden sm:inline text-base font-semibold text-gray-800">
-                Admin Panel
+              <span className="hidden sm:inline text-base font-bold text-gray-800 tracking-tight">
+                ADMIN PANEL
               </span>
             </Link>
+            
+            {/* Added Business Switcher */}
+            <div className="hidden md:block ml-6 border-l pl-6 border-gray-200 h-8 flex items-center">
+              <BusinessSwitcher />
+            </div>
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="md:hidden">
+               {/* Mobile placeholder */}
+            </div>
+
             <NotificationBell />
-            <Link href="/" target="_blank" className="text-gray-600 hover:text-primary-600 p-2">
+            <Link href="/" target="_blank" className="text-gray-500 hover:text-blue-600 p-2 transition-colors" title="View Public Site">
               <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             </Link>
-            <div className="hidden sm:flex items-center space-x-2">
-              <span className="text-sm text-gray-600 max-w-[150px] truncate">{user.email}</span>
+            <div className="hidden sm:flex items-center space-x-2 border-l border-gray-200 pl-4 ml-2">
+              <div className="flex flex-col items-end mr-2">
+                 <span className="text-sm font-semibold text-gray-700 max-w-[150px] truncate leading-tight">{user.email?.split('@')[0]}</span>
+                 <span className="text-xs text-gray-500 capitalize">{businessType === 'all' ? 'Super Admin' : businessType}</span>
+              </div>
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-slate-600 text-white rounded-lg hover:from-blue-700 hover:to-slate-700 transition-all text-sm font-semibold shadow-md"
+                className="p-2 text-gray-500 hover:text-red-600 transition-colors"
+                title="Logout"
               >
-                Logout
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
               </button>
             </div>
             <button
@@ -141,126 +161,142 @@ export default function AdminLayout({ children }) {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed top-16 left-0 bottom-0 w-64 bg-gradient-to-b from-white to-blue-50 shadow-2xl transition-transform duration-300 z-40 overflow-y-auto border-r-2 border-blue-100 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed top-16 left-0 bottom-0 w-64 bg-white shadow-xl transition-transform duration-300 z-40 overflow-y-auto border-r border-gray-200 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <nav className="p-4 min-h-full flex flex-col">
-          <ul className="space-y-2 flex-1">
-            <li>
-              <Link
-                href="/admin"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname === '/admin' ? 'bg-gradient-to-r from-blue-600 to-slate-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-slate-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
-                Dashboard
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/products"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname.startsWith('/admin/products') ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-cyan-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                Products
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/categories"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname.startsWith('/admin/categories') ? 'bg-gradient-to-r from-slate-600 to-gray-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-gray-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                </svg>
-                Categories
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/orders"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname.startsWith('/admin/orders') ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                </svg>
-                Orders
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/invoices/new"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname === '/admin/invoices/new' ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-blue-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                New Invoice
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/invoices"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname === '/admin/invoices' ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Invoice History
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/notifications"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname === '/admin/notifications' ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-                Notifications
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin/maintenance"
-                className={`flex items-center px-4 py-3 rounded-lg transition-all transform hover:scale-105 ${
-                  router.pathname === '/admin/maintenance' ? 'bg-gradient-to-r from-gray-600 to-slate-600 text-white shadow-md' : 'text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-slate-50'
-                }`}
-              >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                System Maintenance
-              </Link>
-            </li>
-          </ul>
+          {/* Mobile Switcher inside Sidebar */}
+          <div className="md:hidden mb-6 pb-6 border-b border-gray-100">
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-3 px-2">Business Context</p>
+            <BusinessSwitcher />
+          </div>
 
-          <div className="mt-8 pt-4 border-t border-blue-200 text-center">
-             <p className="text-lg text-gray-500">
-              Designed and developed by <a href="https://affan.tech" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent hover:from-blue-500 hover:via-purple-600 hover:to-pink-600 transition-all font-semibold">Affan.Tech</a>
+          <div className="space-y-6 flex-1">
+            
+            {/* Core Management */}
+            <div>
+              <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Core</p>
+              <ul className="space-y-1">
+                <li>
+                  <Link
+                    href="/admin"
+                    className={`flex items-center px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                      router.pathname === '/admin' ? sidebarActiveClass : sidebarHoverClass
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/admin/orders"
+                    className={`flex items-center px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                      router.pathname.startsWith('/admin/orders') ? sidebarActiveClass : sidebarHoverClass
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    Orders
+                  </Link>
+                </li>
+               <li>
+                  <Link
+                    href="/admin/products"
+                    className={`flex items-center px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                      router.pathname.startsWith('/admin/products') ? sidebarActiveClass : sidebarHoverClass
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    Products
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Specialized Modules */}
+            <div>
+              <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Inventory</p>
+              <ul className="space-y-1">
+                {/* Inventory - Electronics/Furniture/Solar(parts) */}
+                {(isVisible('electronics') || isVisible('furniture') || isVisible('solar') || isVisible('all')) && (
+                <li>
+                  <Link
+                    href="/admin/inventory"
+                    className={`flex items-center px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                      router.pathname.startsWith('/admin/inventory') ? sidebarActiveClass : sidebarHoverClass
+                    }`}
+                  >
+                    <svg className="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    Inventory
+                  </Link>
+                </li>
+                )}
+              </ul>
+            </div>
+
+            {/* Finance & System */}
+            <div>
+              <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Finance</p>
+              <ul className="space-y-1">
+                <li>
+                  <Link
+                    href="/admin/invoices"
+                    className={`flex items-center px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                      router.pathname.startsWith('/admin/invoices') ? sidebarActiveClass : sidebarHoverClass
+                    }`}
+                  >
+                     <svg className="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Invoices
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/admin/categories"
+                    className={`flex items-center px-4 py-2.5 rounded-lg transition-all text-sm font-medium ${
+                      router.pathname.startsWith('/admin/categories') ? sidebarActiveClass : sidebarHoverClass
+                    }`}
+                  >
+                     <svg className="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    Categories
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="pt-2"> 
+               <Link
+                    href="/admin/settings"
+                    className={`flex items-center px-4 py-2.5 rounded-lg transition-all text-sm font-medium text-gray-700 hover:bg-gray-100 mt-2`}
+                  >
+                    <svg className="w-5 h-5 mr-3 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Settings
+                  </Link>
+            </div>
+          </div>
+
+          <div className="mt-auto border-t border-gray-100 pt-4">
+             <p className="text-xs text-center text-gray-400">
+              Impress Enterprise 2.0
             </p>
           </div>
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className={`pt-16 transition-all duration-300 lg:ml-0 min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50`}>
+      <main className={`pt-16 transition-all duration-300 ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-64'} min-h-screen bg-gray-50`}>
         <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
@@ -271,4 +307,13 @@ export default function AdminLayout({ children }) {
       </div>
     </>
   )
+}
+
+/**
+ * Admin Layout
+ * Wraps content with the Business Context Provider
+ */
+export default function AdminLayout({ children }) {
+  // Use the already-mounted AdminBusinessProvider from pages/_app.jsx
+  return <AdminLayoutContent>{children}</AdminLayoutContent>
 }

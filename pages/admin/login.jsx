@@ -36,9 +36,22 @@ export default function AdminLogin() {
         .eq('user_id', data.user.id)
         .single()
 
-      if (roleError || !roleData) {
+      if (roleError) {
+        console.error('Role check error:', roleError)
         await supabase.auth.signOut()
-        throw new Error('You do not have admin access')
+        throw new Error(`Access verification failed: ${roleError.message}`)
+      }
+
+      if (!roleData) {
+        console.error('No role found for user:', data.user.id)
+        await supabase.auth.signOut()
+        throw new Error('No role assigned to your account')
+      }
+
+      // Check specifically for admin role if needed, or just existence
+      if (roleData.role !== 'admin') {
+         await supabase.auth.signOut() 
+         throw new Error('You do not have admin permissions')
       }
 
       // Redirect to admin dashboard
@@ -71,7 +84,7 @@ export default function AdminLogin() {
               <div className="bg-white p-4 rounded-2xl shadow-2xl mb-4 group-hover:scale-105 transition-transform">
                 <Logo size="large" showText={false} />
               </div>
-              <h1 className="text-3xl font-bold text-white mb-1 drop-shadow-lg">Empire Car A/C</h1>
+              <h1 className="text-3xl font-bold text-white mb-1 drop-shadow-lg">Impress Enterprise</h1>
               <p className="text-blue-200 font-medium">Admin Dashboard</p>
             </Link>
           </div>

@@ -4,6 +4,8 @@ import Head from 'next/head'
 import Link from 'next/link'
 import Image from 'next/image'
 import CustomerLayout from '@/components/CustomerLayout'
+import CustomerToast from '@/components/CustomerToast'
+import CancellationModal from '@/components/CancellationModal'
 import useSimpleAuth from '@/hooks/useSimpleAuth'
 import { supabase } from '@/lib/supabaseClient'
 import siteConfig from '@/site.config'
@@ -53,7 +55,7 @@ export default function OrderDetail() {
             name,
             slug,
             brand,
-            car_model,
+            sku,
             product_images(image_url, is_primary)
           )
         `)
@@ -328,25 +330,6 @@ export default function OrderDetail() {
     return info[status] || info.pending
   }
 
-  function getProductImage(product) {
-    if (!product?.product_images || product.product_images.length === 0) {
-      return '/images/placeholder-product.jpg'
-    }
-    
-    const primaryImage = product.product_images.find(img => img.is_primary)
-    return primaryImage?.image_url || product.product_images[0]?.image_url
-  }
-
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    })
-  }
-
   if (loading) {
     return (
       <CustomerLayout>
@@ -393,7 +376,7 @@ export default function OrderDetail() {
   return (
     <CustomerLayout>
       <Head>
-        <title>Order {order.order_number} - Empire Car A/C</title>
+        <title>Order {order.order_number} - Impress Enterprise</title>
       </Head>
 
       {/* Toast Notification */}
@@ -500,6 +483,30 @@ export default function OrderDetail() {
               </div>
             )}
 
+            {/* Action Buttons */}
+            {!isCancelled && (
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link
+                  href={`/customer/deliveries/${order.id}`}
+                  className="flex-1 min-w-[200px] px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-semibold shadow-md flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                  </svg>
+                  Track Delivery
+                </Link>
+                <Link
+                  href="/customer/returns"
+                  className="flex-1 min-w-[200px] px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:from-orange-700 hover:to-red-700 transition-all font-semibold shadow-md flex items-center justify-center"
+                >
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                  </svg>
+                  Request Return
+                </Link>
+              </div>
+            )}
+
             {/* Payment Information */}
             {order.payment_received_at && (
               <div className="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-lg">
@@ -554,10 +561,9 @@ export default function OrderDetail() {
                         </span>
                       )}
                     </div>
-                    {item.product?.car_model && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Compatible: {item.product.car_model}
-                      </p>
+                    {/* car_model removed; show SKU if available */}
+                    {item.product?.sku && (
+                      <p className="text-xs text-gray-500 mt-1">SKU: {item.product.sku}</p>
                     )}
                   </div>
 

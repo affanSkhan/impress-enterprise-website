@@ -1,29 +1,33 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import AdminLayout from '@/components/AdminLayout';
 import Toast from '@/components/Toast';
 import { supabase } from '@/lib/supabaseClient';
+import { useAdminBusiness } from '@/context/AdminBusinessContext'
 
 export default function CategoriesPage() {
   const router = useRouter();
+  const { businessType, getThemeColor } = useAdminBusiness();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  async function fetchCategories() {
+  const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      let query = supabase
         .from('categories')
         .select('*')
         .order('name', { ascending: true });
+        
+      if (businessType !== 'all') {
+         query = query.eq('business_type', businessType);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setCategories(data || []);
@@ -33,7 +37,11 @@ export default function CategoriesPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [businessType]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   async function handleDelete(id) {
     try {
@@ -119,15 +127,22 @@ export default function CategoriesPage() {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Categories</h1>
             <p className="text-sm sm:text-base text-gray-600 mt-1">Manage product categories</p>
           </div>
-          <Link
-            href="/admin/categories/new"
-            className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Add Category
-          </Link>
+          <div className="flex gap-2">
+             {businessType !== 'all' && (
+             <span className={`flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase bg-${getThemeColor()}-100 text-${getThemeColor()}-800`}>
+               {businessType} Mode
+             </span>
+             )}
+            <Link
+              href="/admin/categories/new"
+              className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add Category
+            </Link>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -186,8 +201,22 @@ export default function CategoriesPage() {
             {filteredCategories.map((category) => (
               <div key={category.id} className="bg-white rounded-xl shadow-md p-4 border border-gray-200">
                 <div className="mb-3">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-1">{category.name}</h3>
-                  <p className="text-xs text-gray-500 mb-2">{category.slug}</p>
+                  <div className="flex justify-between items-start">
+                     <div>
+                       <h3 className="text-sm font-semibold text-gray-900 mb-1">{category.name}</h3>
+                       <p className="text-xs text-gray-500 mb-2">{category.slug}</p>
+                     </div>
+                      {businessType === 'all' && category.business_type && (
+                         <span className={`inline-flex items-center px-2 py-1 rounded-md uppercase text-xs font-bold ${
+                           category.business_type === 'electronics' ? 'bg-blue-100 text-blue-800' :
+                           category.business_type === 'furniture' ? 'bg-amber-100 text-amber-800' :
+                           category.business_type === 'solar' ? 'bg-green-100 text-green-800' :
+                           'bg-gray-100 text-gray-800'
+                         }`}>
+                           {category.business_type}
+                         </span>
+                      )}
+                  </div>
                   <p className="text-xs text-gray-400">
                     Created: {new Date(category.created_at).toLocaleDateString()}
                   </p>
@@ -224,6 +253,11 @@ export default function CategoriesPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Name
                     </th>
+                    {businessType === 'all' && (
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Business
+                    </th>
+                    )}
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Slug
                     </th>
@@ -241,6 +275,18 @@ export default function CategoriesPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">{category.name}</div>
                       </td>
+                       {businessType === 'all' && (
+                        <td className="px-6 py-4 whitespace-nowrap">
+                           <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${
+                             category.business_type === 'electronics' ? 'bg-blue-100 text-blue-800' :
+                             category.business_type === 'furniture' ? 'bg-amber-100 text-amber-800' :
+                             category.business_type === 'solar' ? 'bg-green-100 text-green-800' :
+                             'bg-gray-100 text-gray-800'
+                           }`}>
+                             {category.business_type || 'all'}
+                           </span>
+                        </td>
+                      )}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500">{category.slug}</div>
                       </td>

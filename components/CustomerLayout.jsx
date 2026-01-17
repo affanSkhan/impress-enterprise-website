@@ -83,7 +83,7 @@ export default function CustomerLayout({ children }) {
                     : 'text-gray-600 hover:text-blue-600'
                 }`}
               >
-                My Orders
+                Orders
               </Link>
             </div>
 

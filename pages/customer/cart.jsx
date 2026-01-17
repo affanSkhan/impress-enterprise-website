@@ -38,7 +38,7 @@ export default function CartPage() {
             name,
             slug,
             brand,
-            car_model,
+            sku,
             category:categories(name),
             images:product_images(image_url, is_primary)
           )
@@ -223,7 +223,7 @@ export default function CartPage() {
                           </h3>
                           <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-1">
                             {item.product.brand && `${item.product.brand}`}
-                            {item.product.car_model && ` • ${item.product.car_model}`}
+                            {item.product.sku && ` • ${item.product.sku}`}
                           </p>
 
                           {/* Quantity Controls - Mobile touch-friendly */}

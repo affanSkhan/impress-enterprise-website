@@ -3,27 +3,43 @@ import { useState, useEffect } from 'react';
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     // Check if already installed
-    const isInstalled = window.matchMedia('(display-mode: standalone)').matches 
+    const installed = window.matchMedia('(display-mode: standalone)').matches 
       || window.navigator.standalone === true;
     
-    if (isInstalled) {
+    setIsInstalled(installed);
+    
+    console.log('[PWA] Is app installed?', installed);
+    console.log('[PWA] Display mode:', window.matchMedia('(display-mode: standalone)').matches);
+    
+    if (installed) {
       return;
     }
 
     // Listen for beforeinstallprompt event
     const handleBeforeInstallPrompt = (e) => {
+      console.log('[PWA] beforeinstallprompt event fired!');
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
       // Stash the event so it can be triggered later
       setDeferredPrompt(e);
       // Show our custom install prompt
+      console.log('[PWA] Showing prompt immediately for debugging');
       setShowPrompt(true);
     };
 
+    // For debugging: Force prompt if in dev environment and not installed
+    if (process.env.NODE_ENV === 'development' && !installed) {
+        console.log('[PWA] Dev mode: Waiting for install prompt...');
+        // Sometimes browser needs a moment or user interaction
+    }
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    
+    console.log('[PWA] Added beforeinstallprompt listener');
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -64,11 +80,17 @@ export default function PWAInstallPrompt() {
     if (dismissed) {
       const dismissedTime = parseInt(dismissed);
       const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24);
+      console.log('[PWA] Days since dismissed:', daysSinceDismissed);
       if (daysSinceDismissed < 7) {
         setShowPrompt(false);
       }
     }
   }, []);
+
+  // If already installed, don't show anything
+  if (isInstalled) {
+    return null;
+  }
 
   if (!showPrompt) {
     return null;

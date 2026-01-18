@@ -194,8 +194,20 @@ export default function CartPage() {
                       category === 'Furniture' ? 'bg-teal-100' : 'bg-blue-100'
                     }`}>
                       <span className="text-lg">
-                        {category === 'Solar Products' ? '☀️' :
-                         category === 'Furniture' ? '🪑' : '⚡'}
+                        {category === 'Solar Products' ? (
+                          <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
+                        ) : category === 'Furniture' ? (
+                          <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 22V12h6v10" />
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          </svg>
+                        )}
                       </span>
                     </div>
                     <h2 className="font-bold text-gray-900">{category}</h2>

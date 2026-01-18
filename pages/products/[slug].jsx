@@ -179,7 +179,7 @@ export default function ProductDetailsPage() {
     return (
       <>
         <Head>
-          <title>Product Not Found - Empire Spare Parts</title>
+          <title>Product Not Found - Impress Enterprise</title>
           <meta name="robots" content="noindex, nofollow" />
         </Head>
         <Navbar />
@@ -201,7 +201,7 @@ export default function ProductDetailsPage() {
   }
 
   // SEO metadata
-  const pageTitle = `${product.name} - Empire Spare Parts`
+  const pageTitle = `${product.name} - Impress Enterprise`
   const pageDescription = product.description || `${product.name} - contact us for pricing and availability.`
 
   // Build back URL with preserved filters

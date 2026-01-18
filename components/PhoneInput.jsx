@@ -177,7 +177,7 @@ export default function PhoneInput({
 
       if (response.ok && data.available && data.reason !== 'duplicate') {
         setWhatsappStatus('available')
-        setWhatsappMessage(`✓ Valid 10-digit number available on WhatsApp`)
+        setWhatsappMessage(`Valid 10-digit number available on WhatsApp`)
         if (onWhatsAppStatus) onWhatsAppStatus({ available: true, phone: fullPhone })
       } else {
         setWhatsappStatus('unavailable')

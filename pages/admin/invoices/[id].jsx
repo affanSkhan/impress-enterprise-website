@@ -29,8 +29,8 @@ export default function InvoiceDetailPage() {
     state: 'Maharashtra',
     zipCode: '444601',
     phone: '+917741077666',
-    email: 'Empirecarac@gmail.com',
-    website: 'empirecarac.in'
+    email: 'impressenterprise.in@gmail.com',
+    website: 'impressenterprise.in'
   };
 
   useEffect(() => {

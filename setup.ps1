@@ -1,8 +1,8 @@
-# Empire Spare Parts - Setup Script for Windows PowerShell
+# Impress Enterprise - Setup Script for Windows PowerShell
 # Run this script to perform initial setup steps
 
 Write-Host "=====================================" -ForegroundColor Cyan
-Write-Host "Empire Spare Parts - Setup Script" -ForegroundColor Cyan
+Write-Host "Impress Enterprise - Setup Script" -ForegroundColor Cyan
 Write-Host "=====================================" -ForegroundColor Cyan
 Write-Host ""
 

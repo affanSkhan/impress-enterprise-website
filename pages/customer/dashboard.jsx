@@ -142,23 +142,59 @@ export default function CustomerDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <Link href="/products">
-            <div className="card hover:shadow-2xl transition-all cursor-pointer border-t-4 border-blue-500">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <Link href="/solar">
+            <div className="card hover:shadow-2xl transition-all cursor-pointer border-t-4 border-amber-500">
               <div className="flex items-center">
-                <div className="bg-blue-100 p-3 rounded-lg mr-4">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <div className="bg-amber-100 p-3 rounded-lg mr-4">
+                  <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg">Browse Products</h3>
-                  <p className="text-sm text-gray-600">Explore our car A/C parts catalogue</p>
+                  <h3 className="font-semibold text-lg">Solar Solutions</h3>
+                  <p className="text-sm text-gray-600">Browse solar products</p>
                 </div>
               </div>
             </div>
           </Link>
 
+          <Link href="/electronics">
+            <div className="card hover:shadow-2xl transition-all cursor-pointer border-t-4 border-blue-500">
+              <div className="flex items-center">
+                <div className="bg-blue-100 p-3 rounded-lg mr-4">
+                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Electronics</h3>
+                  <p className="text-sm text-gray-600">Browse electronics</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/furniture">
+            <div className="card hover:shadow-2xl transition-all cursor-pointer border-t-4 border-teal-500">
+              <div className="flex items-center">
+                <div className="bg-teal-100 p-3 rounded-lg mr-4">
+                  <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 22V12h6v10" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Furniture</h3>
+                  <p className="text-sm text-gray-600">Browse furniture</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        {/* Additional Quick Links */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <Link href="/customer/orders">
             <div className="card hover:shadow-2xl transition-all cursor-pointer border-t-4 border-slate-500">
               <div className="flex items-center">
@@ -169,7 +205,23 @@ export default function CustomerDashboard() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg">View All Orders</h3>
-                  <p className="text-sm text-gray-600">Check your order history and status</p>
+                  <p className="text-sm text-gray-600">Check your order history</p>
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/contact">
+            <div className="card hover:shadow-2xl transition-all cursor-pointer border-t-4 border-cyan-500">
+              <div className="flex items-center">
+                <div className="bg-cyan-100 p-3 rounded-lg mr-4">
+                  <svg className="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg">Contact Us</h3>
+                  <p className="text-sm text-gray-600">Get in touch with us</p>
                 </div>
               </div>
             </div>
@@ -190,9 +242,17 @@ export default function CustomerDashboard() {
           ) : recentOrders.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <p className="mb-4">You haven't placed any orders yet.</p>
-              <Link href="/products" className="btn-primary inline-block">
-                Browse Products
-              </Link>
+              <div className="flex gap-3 justify-center flex-wrap">
+                <Link href="/solar" className="btn-primary inline-block">
+                  Solar Solutions
+                </Link>
+                <Link href="/electronics" className="btn-primary inline-block">
+                  Electronics
+                </Link>
+                <Link href="/furniture" className="btn-primary inline-block">
+                  Furniture
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">

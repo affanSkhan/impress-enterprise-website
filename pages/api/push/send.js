@@ -19,7 +19,7 @@ if (!vapidPublicKey || !vapidPrivateKey) {
 }
 
 webpush.setVapidDetails(
-  'mailto:admin@empirecarac.in',
+  'mailto:impressenterprise.in@gmail.com',
   vapidPublicKey,
   vapidPrivateKey
 )
@@ -103,7 +103,7 @@ export default async function handler(req, res) {
           console.log(`[${index + 1}] Sending FCM to token: ${fcmToken.substring(0, 20)}...`);
           
           await sendFCMNotification(fcmToken, {
-            title: title || 'Empire Car A/C',
+            title: title || 'Impress Enterprise',
             body: message || 'You have a new notification',
             url: url || '/admin',
             data: {
@@ -140,7 +140,7 @@ export default async function handler(req, res) {
         const uniqueTag = `empire-${Date.now()}-${index}`;
         
         const payload = JSON.stringify({
-          title: title || 'Empire Car A/C',
+          title: title || 'Impress Enterprise',
           body: message || 'You have a new notification',
           message: message,
           url: url || '/admin',

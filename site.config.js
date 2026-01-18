@@ -9,8 +9,8 @@ const siteConfig = {
   // ===== BRAND IDENTITY =====
   brandName: 'Impress Enterprise',
   brandShortName: 'Impress',
-  tagline: 'Solar & Electronics Solutions',
-  description: 'Impress Enterprise provides professional solar panel installation & maintenance, along with comprehensive electronics sales and service including AC, refrigerators, washing machines, and inverters in Daryapur and surrounding areas.',
+  tagline: 'Solar • Electronics • Furniture',
+  description: 'Impress Enterprise provides professional solar panel installation & maintenance, comprehensive electronics sales and service including AC, refrigerators, washing machines, inverters, and quality furniture for home and office in Daryapur and surrounding areas.',
   
   // ===== VISUAL ASSETS =====
   logo: {
@@ -106,12 +106,12 @@ const siteConfig = {
   },
   
   // ===== CONTACT INFORMATION =====
-  // TODO: Update with actual business contact details
   contact: {
-    phone: '+91 XXXXX XXXXX',           // TODO: Add actual phone number
-    phoneFormatted: '+91 XXXXX XXXXX',  // TODO: Add formatted display number
-    whatsapp: '91XXXXXXXXXX',           // TODO: Add WhatsApp number (no + or spaces)
-    email: 'info@impressenterprise.in', // TODO: Update with actual email
+    phone: '+91 77448 19280',
+    phoneSecondary: '+91 97630 50759',
+    phoneFormatted: '+91 77448 19280 | +91 97630 50759',
+    whatsapp: '917744819280',           // Primary WhatsApp number (no + or spaces)
+    email: 'impressenterprise.in@gmail.com',
     address: {
       line1: 'Shop Address Line 1',    // TODO: Add actual address
       line2: 'Daryapur, Dist. Amravati',

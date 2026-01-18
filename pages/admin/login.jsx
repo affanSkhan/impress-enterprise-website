@@ -66,7 +66,7 @@ export default function AdminLogin() {
   return (
     <>
       <Head>
-        <title>Admin Login - Empire Spare Parts</title>
+        <title>Admin Login - Impress Enterprise</title>
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 

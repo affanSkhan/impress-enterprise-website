@@ -166,7 +166,7 @@ Please review and confirm if you'd like to proceed with this order.
 
 For any questions, feel free to contact us.
 
-- Empire Car A/C Spare Parts`
+- Impress Enterprise`
 
   return `https://wa.me/${fullPhone}?text=${encodeURIComponent(message)}`
 }

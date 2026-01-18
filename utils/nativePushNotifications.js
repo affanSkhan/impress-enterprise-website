@@ -56,7 +56,7 @@ export async function initNativePush() {
         }
 
         // Native app must call the live server API (not local API route)
-        const apiUrl = 'https://www.empirecarac.in/api/push/subscribe-native';
+        const apiUrl = 'https://impressenterprise.in/api/push/subscribe-native';
         console.log('[Native Push] Saving token to:', apiUrl);
         
         const response = await fetch(apiUrl, {

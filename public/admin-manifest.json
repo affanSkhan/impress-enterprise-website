@@ -3,6 +3,7 @@
   "short_name": "Impress Admin",
   "description": "Admin dashboard for Impress Enterprise - Solar, Electronics & Furniture",
   "start_url": "/admin",
+  "scope": "/admin",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0284c7",

@@ -20,19 +20,36 @@ const STATIC_ASSETS = [
   '/android-chrome-512x512.png',
   '/apple-touch-icon.png',
   '/favicon-32x32.png',
-  '/manifest.json',
+  '/admin-manifest.json',
 ];
 
 // Install event - cache essential admin assets
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing v5...');
+  console.log('[Service Worker] Installing', SW_VERSION);
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[Service Worker] Caching static assets');
-      return cache.addAll(STATIC_ASSETS).catch(err => {
-        console.error('[Service Worker] Failed to cache assets:', err);
-      });
-    })
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      console.log('[Service Worker] Caching static assets (tolerant mode)');
+      const results = await Promise.all(STATIC_ASSETS.map(async (asset) => {
+        try {
+          const res = await fetch(asset, { cache: 'no-store' });
+          if (!res || !res.ok) {
+            console.warn('[Service Worker] Asset fetch failed, skipping:', asset, res && res.status);
+            return { asset, ok: false, status: res && res.status };
+          }
+          await cache.put(asset, res.clone());
+          return { asset, ok: true };
+        } catch (err) {
+          console.warn('[Service Worker] Asset fetch error, skipping:', asset, err && err.message);
+          return { asset, ok: false, error: err };
+        }
+      }));
+
+      const failed = results.filter(r => !r.ok);
+      if (failed.length > 0) {
+        console.info('[Service Worker] Some assets were not cached:', failed.map(f => ({ asset: f.asset, status: f.status })));
+      }
+    })()
   );
   // Force the waiting service worker to become the active service worker
   self.skipWaiting();

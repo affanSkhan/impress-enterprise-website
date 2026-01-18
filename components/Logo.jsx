@@ -40,6 +40,7 @@ export default function Logo({ className = "", size = "normal", showText = true 
           height={currentSize.logo}
           className="w-full h-full object-cover"
           priority
+          unoptimized // Bypass Vercel Image Optimization (fixes 402/404 errors on logo)
         />
       </div>
 

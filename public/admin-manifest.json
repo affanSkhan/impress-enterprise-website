@@ -1,7 +1,7 @@
 {
-  "name": "Impress Enterprise - Admin Dashboard",
+  "name": "Impress Enterprise",
   "short_name": "Impress Admin",
-  "description": "Admin dashboard for Impress Enterprise order and service management",
+  "description": "Admin dashboard for Impress Enterprise - Solar, Electronics & Furniture",
   "start_url": "/admin",
   "display": "standalone",
   "background_color": "#0f172a",

@@ -12,9 +12,6 @@ export default function Document() {
         {/* Theme Color */}
         <meta name="theme-color" content="#2563eb" />
         
-        {/* PWA Manifest */}
-        <link rel="manifest" href="/manifest.json" />
-        
         {/* Apple Touch Icons */}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         

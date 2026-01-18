@@ -1,7 +1,7 @@
 // Service Worker for Impress Enterprise Admin Dashboard PWA
-// VERSION 7 - Updated with Impress Enterprise branding
-const CACHE_NAME = 'impress-admin-v7';
-const SW_VERSION = '7.0.0';
+// VERSION 8 - Updated with Impress Enterprise branding and new routes
+const CACHE_NAME = 'impress-admin-v8';
+const SW_VERSION = '8.0.0';
 
 // Log immediately when service worker script runs
 console.log('[Service Worker] Script loaded, version:', SW_VERSION);
@@ -159,7 +159,7 @@ self.addEventListener('push', function(event) {
   
   // CRITICAL: Parse notification data immediately in synchronous context
   let notificationData = {
-    title: 'Empire Car A/C',
+    title: 'Impress Enterprise',
     body: 'New notification',
     url: '/admin'
   };
@@ -171,7 +171,7 @@ self.addEventListener('push', function(event) {
       console.log('[Service Worker] Raw push data:', rawData);
       const parsed = JSON.parse(rawData);
       notificationData = {
-        title: parsed.title || 'Empire Car A/C',
+        title: parsed.title || 'Impress Enterprise',
         body: parsed.body || parsed.message || 'New notification',
         url: parsed.url || parsed.link || '/admin',
         tag: parsed.tag,
@@ -190,7 +190,7 @@ self.addEventListener('push', function(event) {
     icon: '/icons/icon-192x192.png', // Use standard PWA icon
     badge: '/icons/icon-72x72.png',  // Use standard PWA icon for badge
     vibrate: [300, 100, 200, 100, 300],
-    tag: notificationData.tag || 'empire-' + Date.now(),
+    tag: notificationData.tag || 'impress-' + Date.now(),
     requireInteraction: true, // Keep notification on screen until user interacts
     renotify: true,
     silent: false,
@@ -216,7 +216,7 @@ self.addEventListener('push', function(event) {
     .catch((error) => {
       console.error('[Service Worker] ❌ showNotification failed:', error);
       // Fallback: try with minimal options
-      return self.registration.showNotification('Empire Car A/C', {
+      return self.registration.showNotification('Impress Enterprise', {
         body: 'You have a new notification',
         icon: '/icons/icon-192x192.png'
       });

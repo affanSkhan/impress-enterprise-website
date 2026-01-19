@@ -5,13 +5,16 @@ import AdminLayout from '@/components/AdminLayout';
 import Toast from '@/components/Toast';
 import { supabase } from '@/lib/supabaseClient';
 import { slugify } from '@/utils/slugify';
+import { useAdminBusiness } from '@/context/AdminBusinessContext';
 
 export default function EditCategoryPage() {
   const router = useRouter();
   const { id } = router.query;
+  const { businessType } = useAdminBusiness();
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
+    business_type: '',
   });
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,6 +40,7 @@ export default function EditCategoryPage() {
         setFormData({
           name: data.name,
           slug: data.slug,
+          business_type: data.business_type || '',
         });
       }
     } catch (error) {
@@ -50,6 +54,7 @@ export default function EditCategoryPage() {
   function handleNameChange(e) {
     const name = e.target.value;
     setFormData({
+      ...formData,
       name,
       slug: slugify(name),
     });
@@ -78,6 +83,7 @@ export default function EditCategoryPage() {
         .update({
           name: formData.name.trim(),
           slug: formData.slug.trim(),
+          business_type: formData.business_type,
         })
         .eq('id', id);
 
@@ -140,6 +146,23 @@ export default function EditCategoryPage() {
 
         <div className="card">
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="business_type" className="block text-sm font-medium text-gray-700 mb-2">
+                Business Type
+              </label>
+              <select
+                id="business_type"
+                value={formData.business_type}
+                onChange={(e) => setFormData({ ...formData, business_type: e.target.value })}
+                className="input-field"
+              >
+                <option value="">None (Global)</option>
+                <option value="solar">Solar</option>
+                <option value="electronics">Electronics</option>
+                <option value="furniture">Furniture</option>
+              </select>
+            </div>
+
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                 Category Name *

@@ -287,9 +287,12 @@ function AdminLayoutContent({ children }) {
             </div>
           </div>
 
-          <div className="mt-auto border-t border-gray-100 pt-4">
-             <p className="text-xs text-center text-gray-400">
-              Impress Enterprise 2.0
+          <div className="mt-auto border-t border-gray-100 pt-4 pb-2">
+             <p className="text-xs text-center text-gray-400 font-medium">
+              Impress Enterprise
+            </p>
+            <p className="text-[10px] text-center text-gray-400 mt-1">
+              Designed and developed by <a href="https://affan.tech" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent font-bold">Affan.Tech</a>
             </p>
           </div>
         </nav>

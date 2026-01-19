@@ -1,17 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import AdminLayout from '@/components/AdminLayout';
 import Toast from '@/components/Toast';
 import { supabase } from '@/lib/supabaseClient';
 import { slugify } from '@/utils/slugify';
+import { useAdminBusiness } from '@/context/AdminBusinessContext';
 
 export default function NewCategoryPage() {
   const router = useRouter();
+  const { businessType } = useAdminBusiness();
+  
   const [formData, setFormData] = useState({
     name: '',
     slug: '',
+    business_type: '',
   });
+
+  // Set initial business type from context
+  useEffect(() => {
+    if (businessType && businessType !== 'all') {
+      setFormData(prev => ({ ...prev, business_type: businessType }));
+    }
+  }, [businessType]);
+
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -38,6 +50,12 @@ export default function NewCategoryPage() {
       return;
     }
 
+    // Ensure business type is set
+    if (!formData.business_type) {
+      showToast('error', 'Please select a business type');
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -47,6 +65,7 @@ export default function NewCategoryPage() {
           {
             name: formData.name.trim(),
             slug: formData.slug.trim(),
+            business_type: formData.business_type,
           },
         ]);
 
@@ -99,6 +118,27 @@ export default function NewCategoryPage() {
 
         <div className="card">
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Show Business Type selector only if in 'all' context */}
+            {businessType === 'all' && (
+              <div>
+                <label htmlFor="business_type" className="block text-sm font-medium text-gray-700 mb-2">
+                  Business Type *
+                </label>
+                <select
+                  id="business_type"
+                  value={formData.business_type}
+                  onChange={(e) => setFormData({ ...formData, business_type: e.target.value })}
+                  className="input-field"
+                  required
+                >
+                  <option value="">Select Business Type</option>
+                  <option value="solar">Solar</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="furniture">Furniture</option>
+                </select>
+              </div>
+            )}
+
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                 Category Name *

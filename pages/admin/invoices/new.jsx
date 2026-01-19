@@ -15,16 +15,21 @@ import {
   validateInvoice,
   formatDateForInput
 } from '@/utils/invoiceHelpers';
+import { useAdminBusiness } from '@/context/AdminBusinessContext';
 
 export default function NewInvoicePage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAdminAuth();
+  const { businessType } = useAdminBusiness();
   
   const [products, setProducts] = useState([]);
   const [existingInvoices, setExistingInvoices] = useState([]);
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
   
+  // Create formData for business_type to handle 'all' case
+  const [selectedBusinessType, setSelectedBusinessType] = useState('');
+
   // Customer info
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -36,19 +41,34 @@ export default function NewInvoicePage() {
   ]);
 
   useEffect(() => {
+    if (businessType && businessType !== 'all') {
+      setSelectedBusinessType(businessType);
+    }
+  }, [businessType]);
+
+  useEffect(() => {
     if (user) {
       fetchProducts();
       fetchInvoices();
     }
-  }, [user]);
+  }, [user, selectedBusinessType, businessType]); // Re-fetch when context or selection changes
 
   async function fetchProducts() {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('products')
         .select('id, name, brand, sku')
         .eq('is_active', true)
         .order('name');
+      
+      // Filter products based on selected business type (if set) OR context (if strict)
+      const targetType = businessType === 'all' ? selectedBusinessType : businessType;
+      
+      if (targetType) {
+        query = query.eq('business_type', targetType);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setProducts(data || []);
@@ -59,11 +79,16 @@ export default function NewInvoicePage() {
 
   async function fetchInvoices() {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('invoices')
         .select('invoice_number')
         .order('created_at', { ascending: false })
         .limit(100);
+
+       // Optional: Filter existing invoices too to ensure numbering uniqueness within scope?
+       // Usually numbering is global. Leaving it global for now unless requested.
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setExistingInvoices(data || []);
@@ -71,6 +96,7 @@ export default function NewInvoicePage() {
       console.error('Error fetching invoices:', error);
     }
   }
+
 
   // Add new item row
   function addItem() {
@@ -120,6 +146,13 @@ export default function NewInvoicePage() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    const currentBusinessType = businessType === 'all' ? selectedBusinessType : businessType;
+
+    if (!currentBusinessType) {
+      showToast('error', 'Please select a business type');
+      return;
+    }
+
     // Validate
     const validation = validateInvoice({
       customer_name: customerName,
@@ -142,6 +175,7 @@ export default function NewInvoicePage() {
         .from('invoices')
         .insert([{
           invoice_number: invoiceNumber,
+          business_type: currentBusinessType,
           customer_name: customerName.trim(),
           customer_phone: customerPhone.trim() || null,
           date: invoiceDate,
@@ -233,6 +267,30 @@ export default function NewInvoicePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Business Type Selector (Only if context is 'all') */}
+          {businessType === 'all' && (
+            <div className="card">
+              <h2 className="text-xl font-semibold mb-4">Business Information</h2>
+              <div>
+                <label htmlFor="business_type" className="block text-sm font-medium text-gray-700 mb-2">
+                  Business Type *
+                </label>
+                <select
+                  id="business_type"
+                  value={selectedBusinessType}
+                  onChange={(e) => setSelectedBusinessType(e.target.value)}
+                  className="input-field"
+                  required
+                >
+                  <option value="">Select Business Type</option>
+                  <option value="solar">Solar</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="furniture">Furniture</option>
+                </select>
+              </div>
+            </div>
+          )}
+
           {/* Customer Information */}
           <div className="card">
             <h2 className="text-xl font-semibold mb-4">Customer Information</h2>

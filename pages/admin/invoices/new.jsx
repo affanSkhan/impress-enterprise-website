@@ -41,10 +41,16 @@ export default function NewInvoicePage() {
   ]);
 
   useEffect(() => {
+    // If we have a query param 'type', prioritize that
+    if (router.query.type) {
+         setSelectedBusinessType(router.query.type);
+         return;
+    }
+
     if (businessType && businessType !== 'all') {
       setSelectedBusinessType(businessType);
     }
-  }, [businessType]);
+  }, [businessType, router.query]);
 
   useEffect(() => {
     if (user) {

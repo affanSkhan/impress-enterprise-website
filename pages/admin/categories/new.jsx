@@ -19,10 +19,16 @@ export default function NewCategoryPage() {
 
   // Set initial business type from context
   useEffect(() => {
+    // If we have a query param 'context', prioritize that
+    if (router.query.context) {
+        setFormData(prev => ({ ...prev, business_type: router.query.context }));
+        return;
+    }
+
     if (businessType && businessType !== 'all') {
       setFormData(prev => ({ ...prev, business_type: businessType }));
     }
-  }, [businessType]);
+  }, [businessType, router.query]);
 
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);

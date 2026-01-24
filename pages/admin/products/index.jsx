@@ -151,13 +151,11 @@ export default function ProductsPage() {
             <p className="text-sm sm:text-base text-gray-600 mt-1">Manage your product inventory</p>
           </div>
           <div className="flex gap-2">
-             {businessType !== 'all' && (
+             {businessType !== 'all' ? (
+               <>
              <span className={`flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase bg-${getThemeColor()}-100 text-${getThemeColor()}-800`}>
                {businessType} Mode
              </span>
-             )}
-            <div className="relative group">
-              {businessType !== 'all' ? (
                 <Link
                   href={`/admin/products/new/${businessType}`}
                   className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
@@ -167,36 +165,17 @@ export default function ProductsPage() {
                   </svg>
                   Add Product
                 </Link>
-              ) : (
-                <>
-                <button
-                  className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </>
+             ) : (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Add Product
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                    {/* Dropdown for All Context */}
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden group-hover:block border border-gray-100">
-                        <div className="py-1">
-                            <Link href="/admin/products/new?initialBusinessType=solar" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600">
-                                Add Solar Product
-                            </Link>
-                            <Link href="/admin/products/new?initialBusinessType=electronics" className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-                                Add Electronic Product
-                            </Link>
-                             <Link href="/admin/products/new?initialBusinessType=furniture" className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
-                                Add Furniture Product
-                            </Link>
-                        </div>
-                    </div>
-                </>
+                  <p className="text-sm text-amber-800">
+                    <span className="font-semibold">Select a business context</span> (Solar, Electronics, or Furniture) to add products
+                  </p>
+                </div>
               )}
-            </div>
           </div>
         </div>
 
@@ -235,9 +214,13 @@ export default function ProductsPage() {
       {filteredProducts.length === 0 && !loading ? (
         <div className="card text-center py-12">
           <p className="text-gray-500 mb-4">No products found</p>
-          <Link href={businessType && businessType !== 'all' ? `/admin/products/new/${businessType}` : '/admin/products/new'} className="btn-primary inline-block">
-            Create Your First Product
-          </Link>
+          {businessType !== 'all' ? (
+            <Link href={`/admin/products/new/${businessType}`} className="btn-primary inline-block">
+              Create Your First Product
+            </Link>
+          ) : (
+            <p className="text-sm text-amber-600">Select a business context to add products</p>
+          )}
         </div>
       ) : (
         <>

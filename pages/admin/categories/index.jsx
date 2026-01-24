@@ -128,13 +128,11 @@ export default function CategoriesPage() {
             <p className="text-sm sm:text-base text-gray-600 mt-1">Manage product categories</p>
           </div>
           <div className="flex gap-2">
-             {businessType !== 'all' && (
+             {businessType !== 'all' ? (
+               <>
              <span className={`flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase bg-${getThemeColor()}-100 text-${getThemeColor()}-800`}>
                {businessType} Mode
              </span>
-             )}
-            <div className="relative group">
-              {businessType !== 'all' ? (
                 <Link
                   href="/admin/categories/new"
                   className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
@@ -144,37 +142,17 @@ export default function CategoriesPage() {
                   </svg>
                   Add Category
                 </Link>
-                ) : (
-                 <>
-                <button
-                  className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </>
+             ) : (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 flex items-center gap-2">
+                  <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Add Category
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                    {/* Dropdown for All Context */}
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden group-hover:block border border-gray-100">
-                        <div className="py-1">
-                             <h6 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Select Context</h6>
-                            <Link href="/admin/categories/new?context=solar" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600">
-                                Solar Category
-                            </Link>
-                            <Link href="/admin/categories/new?context=electronics" className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">
-                                Electronic Category
-                            </Link>
-                             <Link href="/admin/categories/new?context=furniture" className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600">
-                                Furniture Category
-                            </Link>
-                        </div>
-                    </div>
-                </>
-                )}
-            </div>
+                  <p className="text-sm text-amber-800">
+                    <span className="font-semibold">Select a business context</span> (Solar, Electronics, or Furniture) to add categories
+                  </p>
+                </div>
+              )}
           </div>
         </div>
 
@@ -216,10 +194,13 @@ export default function CategoriesPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <p className="text-gray-500 mb-4">{searchTerm ? 'No categories match your search' : 'No categories found'}</p>
-          {!searchTerm && (
+          {!searchTerm && businessType !== 'all' && (
             <Link href="/admin/categories/new" className="btn-primary inline-block">
               Create Your First Category
             </Link>
+          )}
+          {!searchTerm && businessType === 'all' && (
+            <p className="text-sm text-amber-600">Select a business context to add categories</p>
           )}
           {searchTerm && (
             <button onClick={() => setSearchTerm('')} className="btn-secondary inline-block">

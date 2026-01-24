@@ -173,26 +173,11 @@ export default function EditCategoryPage() {
                 value={formData.name}
                 onChange={handleNameChange}
                 className="input-field"
-                placeholder="e.g., Engine Parts"
+                placeholder="e.g., Solar Panels, Laptops, Dining Tables"
                 required
               />
-            </div>
-
-            <div>
-              <label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
-                Slug *
-              </label>
-              <input
-                type="text"
-                id="slug"
-                value={formData.slug}
-                onChange={handleSlugChange}
-                className="input-field"
-                placeholder="e.g., engine-parts"
-                required
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                URL-friendly version of the name (auto-generated)
+              <p className="text-xs text-gray-500 mt-1">
+                Examples: Solar Panels, Inverters (Solar) | Laptops, Smartphones (Electronics) | Sofas, Tables (Furniture)
               </p>
             </div>
 

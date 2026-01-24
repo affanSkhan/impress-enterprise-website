@@ -27,7 +27,6 @@ export default function ElectronicsPage() {
         images:product_images(image_url, is_primary)
       `)
       .eq('is_active', true)
-      .eq('is_featured', true)
       .eq('business_type', 'electronics')
       .order('created_at', { ascending: false })
       .limit(6)

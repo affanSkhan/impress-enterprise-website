@@ -28,6 +28,7 @@ export default function FurniturePage() {
       `)
       .eq('is_active', true)
       .eq('is_featured', true)
+      .eq('business_type', 'furniture')
       .order('created_at', { ascending: false })
       .limit(6)
 

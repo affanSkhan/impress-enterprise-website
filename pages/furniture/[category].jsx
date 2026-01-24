@@ -63,6 +63,7 @@ export default function FurnitureCategoryPage() {
       `)
       .eq('category_id', categoryData.id)
       .eq('is_active', true)
+      .eq('business_type', 'furniture')
 
     // Apply sorting
     switch (sortBy) {

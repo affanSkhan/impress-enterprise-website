@@ -63,6 +63,7 @@ export default function ElectronicsCategoryPage() {
       `)
       .eq('category_id', categoryData.id)
       .eq('is_active', true)
+      .eq('business_type', 'electronics')
 
     // Apply sorting
     switch (sortBy) {

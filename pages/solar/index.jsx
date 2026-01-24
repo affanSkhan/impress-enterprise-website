@@ -23,7 +23,7 @@ export default function SolarPage() {
       .from('products')
       .select(`
         *,
-        category:categories(id, name, slug),
+        categories(id, name, slug),
         images:product_images(image_url, is_primary)
       `)
       .eq('is_active', true)

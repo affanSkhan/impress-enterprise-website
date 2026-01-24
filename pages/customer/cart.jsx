@@ -39,7 +39,7 @@ export default function CartPage() {
             slug,
             brand,
             sku,
-            category:categories(name),
+            categories(name),
             images:product_images(image_url, is_primary)
           )
         `)
@@ -122,7 +122,7 @@ export default function CartPage() {
   // Get category name for grouping
   const getCategoryGroup = (product) => {
     if (!product?.category?.name) return 'Other'
-    const categoryName = product.category.name.toLowerCase()
+    const categoryName = product.categories?.name?.toLowerCase() || ''
     
     // Map to service groups
     if (categoryName.includes('solar')) return 'Solar Products'

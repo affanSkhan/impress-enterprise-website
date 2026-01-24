@@ -58,7 +58,7 @@ export default function FurnitureCategoryPage() {
       .from('products')
       .select(`
         *,
-        category:categories(id, name, slug),
+        categories(id, name, slug),
         images:product_images(image_url, is_primary)
       `)
       .eq('category_id', categoryData.id)

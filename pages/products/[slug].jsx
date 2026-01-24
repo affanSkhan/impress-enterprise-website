@@ -43,7 +43,7 @@ export default function ProductDetailsPage() {
       .from('products')
       .select(`
         *,
-        category:categories(id, name, slug)
+        categories(id, name, slug)
       `)
       .eq('slug', slug)
       .eq('is_active', true)
@@ -260,14 +260,14 @@ export default function ProductDetailsPage() {
               <li>
                 <Link href={buildBackUrl()} className="hover:text-primary-600">Products</Link>
               </li>
-              {product.category && (
+              {product.categories && (
                 <>
                   <li>
                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                     </svg>
                   </li>
-                  <li className="text-gray-900">{product.category.name}</li>
+                  <li className="text-gray-900">{product.categories.name}</li>
                 </>
               )}
             </ol>
@@ -341,13 +341,13 @@ export default function ProductDetailsPage() {
             {/* Product Information */}
             <div>
               {/* Category Badge */}
-              {product.category && (
+              {product.categories && (
                 <div className="mb-3">
                   <Link
-                    href={`/products?category=${product.category.id}`}
+                    href={`/products?category=${product.categories.id}`}
                     className="inline-block bg-primary-100 text-primary-800 text-sm font-semibold px-4 py-1 rounded-full hover:bg-primary-200 transition-colors"
                   >
-                    {product.category.name}
+                    {product.categories.name}
                   </Link>
                 </div>
               )}
@@ -483,12 +483,12 @@ export default function ProductDetailsPage() {
           </div>
 
           {/* Related Products Section (Optional Enhancement) */}
-          {product.category && (
+          {product.categories && (
             <div className="mt-12">
-              <h2 className="text-2xl font-bold mb-6">More in {product.category.name}</h2>
+              <h2 className="text-2xl font-bold mb-6">More in {product.categories.name}</h2>
               <p className="text-gray-600 mb-4">
-                <Link href={`/products?category=${product.category.id}`} className="text-primary-600 hover:underline">
-                  View all {product.category.name} products →
+                <Link href={`/products?category=${product.categories.id}`} className="text-primary-600 hover:underline">
+                  View all {product.categories.name} products →
                 </Link>
               </p>
             </div>

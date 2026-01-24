@@ -109,10 +109,10 @@ export default function ProductCard({ product }) {
           />
           
           {/* Category Badge */}
-          {product.category && (
+          {product.categories && (
             <div className="absolute top-2 left-2">
               <span className="bg-gradient-to-r from-blue-600 to-slate-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-lg">
-                {product.category.name}
+                {product.categories.name}
               </span>
             </div>
           )}

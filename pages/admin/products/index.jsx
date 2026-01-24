@@ -22,7 +22,7 @@ export default function ProductsPage() {
         .from('products')
         .select(`
           *,
-          category:categories(name)
+          categories(name)
         `)
         .order('created_at', { ascending: false });
 
@@ -92,7 +92,7 @@ export default function ProductsPage() {
     return (
       product.name?.toLowerCase().includes(searchLower) ||
       product.slug?.toLowerCase().includes(searchLower) ||
-      product.category?.name?.toLowerCase().includes(searchLower) ||
+      product.categories?.name?.toLowerCase().includes(searchLower) ||
       product.brand?.toLowerCase().includes(searchLower) ||
       product.sku?.toLowerCase().includes(searchLower)
     );
@@ -262,12 +262,12 @@ export default function ProductsPage() {
                          </span>
                       )}
                       
-                      {product.category && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-blue-50 text-blue-700">
-                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      {product.categories && (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                           </svg>
-                          {product.category.name}
+                          {product.categories.name}
                         </span>
                       )}
                       {product.brand && (
@@ -374,9 +374,9 @@ export default function ProductsPage() {
                       </td>
                     )}
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {product.category ? (
+                      {product.categories ? (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {product.category.name}
+                          {product.categories.name}
                         </span>
                       ) : (
                         <span className="text-gray-400 text-sm">-</span>

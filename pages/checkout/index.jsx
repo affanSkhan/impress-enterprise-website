@@ -71,7 +71,7 @@ export default function CheckoutPage() {
             id,
             name,
             brand,
-            category:categories(name),
+            categories(name),
             images:product_images(image_url, is_primary)
           )
         `)
